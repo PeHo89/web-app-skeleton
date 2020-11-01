@@ -5,3 +5,5 @@ frontend/dist
 
 backend/node_modules
 backend/dist
+
+database/data
