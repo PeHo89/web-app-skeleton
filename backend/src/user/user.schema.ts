@@ -6,6 +6,8 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   @Prop()
+  _id?: string;
+  @Prop()
   firstName: string;
   @Prop()
   lastName: string;
@@ -19,10 +21,10 @@ export class User {
   // city: string;
   // @Prop()
   // country: string;
-  // @Prop()
-  // email: string;
-  // @Prop()
-  // passwordHash: string;
+  @Prop()
+  email: string;
+  @Prop()
+  passwordHash?: string;
   // @Prop()
   // accessToken: string;
   // @Prop()
