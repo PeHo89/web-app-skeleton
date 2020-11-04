@@ -2,40 +2,32 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   UseGuards,
   Request,
-  Inject,
-  forwardRef,
-  ClassSerializerInterceptor,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.schema';
-import { UserDto } from '../../../common/dto/user.dto';
+import { UserDto } from '../dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { NewUserDto } from '../../../common/dto/newUser.dto';
+import { NewUserDto } from '../dto/newUser.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @UseInterceptors(ClassSerializerInterceptor)
-  getAllUser(): Promise<User[]> {
-    return this.userService.getAllUser();
+  async getAllUser(): Promise<UserDto[]> {
+    return (await this.userService.getAllUser(true)) as UserDto[];
   }
 
   @Post()
-  addUser(@Body() newUserDto: NewUserDto): Promise<User> {
-    return this.userService.addUser(newUserDto);
+  async addUser(@Body() newUserDto: NewUserDto): Promise<UserDto> {
+    return (await this.userService.addUser(newUserDto, true)) as UserDto;
   }
 
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
-  getUserById(@Request() req): Promise<User> {
-    // return this.userService.getUserByEmail(req.user.username);
-    return this.userService.getUserById(req.user.sub);
+  async getUserById(@Request() req): Promise<UserDto> {
+    return (await this.userService.getUserById(req.user.sub, true)) as UserDto;
   }
 }

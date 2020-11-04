@@ -2,9 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema, Types } from 'mongoose';
-import { UserDto } from '../../../common/dto/user.dto';
+import { UserDto } from '../dto/user.dto';
 import { SecurityService } from '../security/security.service';
-import { NewUserDto } from '../../../common/dto/newUser.dto';
+import { NewUserDto } from '../dto/newUser.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -13,11 +14,26 @@ export class UserService {
     private securityService: SecurityService,
   ) {}
 
-  getAllUser(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async getAllUser(dto: boolean): Promise<User[] | UserDto[]> {
+    const users = await this.userModel.find().exec();
+
+    let result;
+
+    if (dto) {
+      result = [] as UserDto[];
+      for (const user of users) {
+        result.push(plainToClass(UserDto, user));
+      }
+    } else {
+      result = [] as User[];
+      for (const user of users) {
+        result.push(user.toObject());
+      }
+    }
+    return result;
   }
 
-  addUser(newUserDto: NewUserDto): Promise<User> {
+  async addUser(newUserDto: NewUserDto, dto: boolean): Promise<User | UserDto> {
     const { password, ...remainder } = newUserDto;
 
     const user = {
@@ -26,22 +42,39 @@ export class UserService {
     } as User;
 
     const createdUser = new this.userModel(user);
-    return createdUser.save();
+    const savedUser = await createdUser.save();
+
+    if (dto) {
+      return plainToClass(UserDto, savedUser);
+    } else {
+      return savedUser.toObject();
+    }
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
+  async getUserByEmail(
+    email: string,
+    dto: boolean,
+  ): Promise<User | UserDto | null> {
     const result = await this.userModel.findOne({ email }).exec();
-    if (result) {
+    if (!result) {
+      return null;
+    }
+    if (dto) {
+      return plainToClass(UserDto, result);
+    } else {
       return result.toObject();
     }
-    return null;
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string, dto: boolean): Promise<User | UserDto | null> {
     const result = await this.userModel.findById(id).exec();
-    if (result) {
+    if (!result) {
+      return null;
+    }
+    if (dto) {
+      return plainToClass(UserDto, result);
+    } else {
       return result.toObject();
     }
-    return null;
   }
 }

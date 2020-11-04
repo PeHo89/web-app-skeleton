@@ -1,7 +1,7 @@
 import { Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from './authentication.service';
-import { AccessTokenDto } from '../../../common/dto/accessToken.dto';
+import { AccessTokenDto } from '../dto/accessToken.dto';
 
 @Controller('auth')
 export class AuthenticationController {
