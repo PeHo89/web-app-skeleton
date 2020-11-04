@@ -5,6 +5,7 @@ import { SecurityService } from '../security/security.service';
 import { JwtService } from '@nestjs/jwt';
 import { AccessTokenDto } from '../dto/accessToken.dto';
 import { AccessTokenPayloadDto } from '../dto/accessTokenPayload.dto';
+import { LoginDto } from '../dto/login.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -15,13 +16,16 @@ export class AuthenticationService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<User | null> {
+  async validateUser(loginDto: LoginDto): Promise<User | null> {
     const user: User = (await this.userService.getUserByEmail(
-      username,
+      loginDto.username,
       false,
     )) as User | null;
 
-    if (user && this.securityService.verifyHash(password, user.passwordHash)) {
+    if (
+      user &&
+      this.securityService.verifyHash(loginDto.password, user.passwordHash)
+    ) {
       return user;
     }
     return null;
