@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema, Types } from 'mongoose';
 import { UserDto } from '../../../common/dto/user.dto';
 import { SecurityService } from '../security/security.service';
-import * as mongoose from 'mongoose';
+import { NewUserDto } from '../../../common/dto/newUser.dto';
 
 @Injectable()
 export class UserService {
@@ -17,25 +17,31 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  addUser(userDto: UserDto): Promise<User> {
-    const { password, ...remainder } = userDto;
+  addUser(newUserDto: NewUserDto): Promise<User> {
+    const { password, ...remainder } = newUserDto;
 
     const user = {
       ...remainder,
       passwordHash: this.securityService.createHash(password),
-    };
+    } as User;
 
     const createdUser = new this.userModel(user);
     return createdUser.save();
   }
 
-  async getUserByEmail(email: string): Promise<User> {
+  async getUserByEmail(email: string): Promise<User | null> {
     const result = await this.userModel.findOne({ email }).exec();
-    return result.toObject();
+    if (result) {
+      return result.toObject();
+    }
+    return null;
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string): Promise<User | null> {
     const result = await this.userModel.findById(id).exec();
-    return result.toObject();
+    if (result) {
+      return result.toObject();
+    }
+    return null;
   }
 }
