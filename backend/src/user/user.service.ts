@@ -1,4 +1,10 @@
-import { Logger, Injectable } from '@nestjs/common';
+import {
+  Logger,
+  Injectable,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema, Types } from 'mongoose';
@@ -38,6 +44,13 @@ export class UserService {
   }
 
   async addUser(newUserDto: NewUserDto, dto: boolean): Promise<User | UserDto> {
+    const result = await this.userModel
+      .findOne({ email: newUserDto.email })
+      .exec();
+    if (result) {
+      throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+    }
+
     const { password, ...remainder } = newUserDto;
 
     const user = {
