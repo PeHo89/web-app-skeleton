@@ -5,6 +5,7 @@ import {
   Post,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from '../dto/user.dto';
@@ -29,5 +30,13 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async getUserById(@Request() req): Promise<UserDto> {
     return (await this.userService.getUserById(req.user.sub, true)) as UserDto;
+  }
+
+  @Get('confirm')
+  async confirmEmail(@Query() query: any): Promise<string> {
+    const userId = query.userId;
+    const token = query.token;
+
+    return this.userService.confirmEmail(userId, token);
   }
 }

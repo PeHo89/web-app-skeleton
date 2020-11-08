@@ -10,4 +10,8 @@ export class SecurityService {
   verifyHash(plainData: string, hashedData: string): boolean {
     return this.createHash(plainData) === hashedData;
   }
+
+  createRandomToken(size: number): string {
+    return crypto.randomBytes(size).toString('hex');
+  }
 }
