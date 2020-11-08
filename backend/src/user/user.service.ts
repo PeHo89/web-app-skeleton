@@ -1,10 +1,4 @@
-import {
-  Logger,
-  Injectable,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Logger, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema, Types } from 'mongoose';
@@ -13,6 +7,8 @@ import { SecurityService } from '../security/security.service';
 import { NewUserDto } from '../dto/newUser.dto';
 import { plainToClass } from 'class-transformer';
 import { MailService } from '../mail/mail.service';
+import { FileService } from '../file/file.service';
+import { File } from '../file/file.interface';
 
 @Injectable()
 export class UserService {
@@ -22,6 +18,7 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private securityService: SecurityService,
     private mailService: MailService,
+    private fileService: FileService,
   ) {}
 
   async getAllUser(dto: boolean): Promise<User[] | UserDto[]> {
@@ -154,5 +151,21 @@ export class UserService {
       this.logger.log(`Failed confirming email '${updateResult.email}'`);
       return 'Failed confirming email';
     }
+  }
+
+  async addProfileImage(id: string, image: File): Promise<void> {
+    const profileImagePath = 'user/profile_images';
+
+    const filename = `${id}.${
+      image.originalname.split('.')[image.originalname.split('.').length - 1]
+    }`;
+
+    this.fileService.deleteFile(profileImagePath, id);
+    this.fileService.addFile(profileImagePath, filename, image.buffer);
+  }
+
+  async getProfileImage(id: string): Promise<Buffer | null> {
+    const profileImagePath = 'user/profile_images';
+    return this.fileService.getFile(profileImagePath, id);
   }
 }

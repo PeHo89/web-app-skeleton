@@ -6,5 +6,6 @@ frontend/dist
 backend/node_modules
 backend/dist
 backend/.env
+backend/data
 
 database/data
