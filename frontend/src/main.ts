@@ -3,8 +3,23 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import "primeflex/primeflex.css";
+import "primeicons/primeicons.css";
+import "primevue/resources/themes/saga-blue/theme.css";
+import "primevue/resources/primevue.min.css";
+import Menubar from "primevue/menubar";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Password from "primevue/password";
 
-createApp(App)
-  .use(store)
-  .use(router)
-  .mount("#app");
+const app = createApp(App);
+
+app.component("Menubar", Menubar);
+app.component("Button", Button);
+app.component("InputText", InputText);
+app.component("Password", Password);
+
+app.use(store);
+app.use(router);
+
+app.mount("#app");
