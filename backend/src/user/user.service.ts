@@ -10,6 +10,7 @@ import { MailService } from '../mail/mail.service';
 import { FileService } from '../file/file.service';
 import { File } from '../file/file.interface';
 import { NewAdminDto } from '../dto/newAdmin.dto';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable()
 export class UserService {
@@ -20,6 +21,7 @@ export class UserService {
     private securityService: SecurityService,
     private mailService: MailService,
     private fileService: FileService,
+    private authenticationService: AuthenticationService,
   ) {}
 
   async getAllUser(dto: boolean): Promise<User[] | UserDto[]> {
@@ -59,9 +61,13 @@ export class UserService {
     } as User;
 
     const createdUser = new this.userModel(user);
-    let savedUser = await createdUser.save();
+    const savedUser = await createdUser.save();
 
     this.prepareSendingDoubleOptInEmail(savedUser);
+
+    savedUser['accessToken'] = this.authenticationService.login(
+      savedUser,
+    ).accessToken;
 
     if (dto) {
       return plainToClass(UserDto, savedUser);
@@ -95,9 +101,13 @@ export class UserService {
     } as User;
 
     const createdAdmin = new this.userModel(admin);
-    let savedAdmin = await createdAdmin.save();
+    const savedAdmin = await createdAdmin.save();
 
     this.prepareSendingDoubleOptInEmail(savedAdmin);
+
+    savedAdmin['accessToken'] = this.authenticationService.login(
+      savedAdmin,
+    ).accessToken;
 
     if (dto) {
       return plainToClass(UserDto, savedAdmin);
@@ -216,20 +226,5 @@ export class UserService {
   async getProfileImage(id: string): Promise<Buffer | null> {
     const profileImagePath = 'user/profile_images';
     return this.fileService.getFile(profileImagePath, id);
-  }
-
-  async userHasRole(id: string, roles: string[]): Promise<boolean> {
-    const result = await this.userModel.findById(id).exec();
-    if (!result || !result.roles) {
-      return false;
-    }
-    for (const role of roles) {
-      for (const userRole of result.roles) {
-        if (userRole === role) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 }

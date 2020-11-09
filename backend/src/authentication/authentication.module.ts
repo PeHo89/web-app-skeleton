@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { UserModule } from '../user/user.module';
 import { SecurityModule } from '../security/security.module';
@@ -11,7 +11,7 @@ import * as Constants from '../common/constants';
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     SecurityModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({

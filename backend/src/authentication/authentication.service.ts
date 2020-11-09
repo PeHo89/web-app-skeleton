@@ -40,4 +40,19 @@ export class AuthenticationService {
       accessToken: this.jwtService.sign(payload),
     };
   }
+
+  async userHasRole(id: string, roles: string[]): Promise<boolean> {
+    const result = (await this.userService.getUserById(id, false)) as User;
+    if (!result || !result.roles) {
+      return false;
+    }
+    for (const role of roles) {
+      for (const userRole of result.roles) {
+        if (userRole === role) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }

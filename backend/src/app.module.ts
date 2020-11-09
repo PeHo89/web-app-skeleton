@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
-import { AuthenticationModule } from './authentication/authentication.module';
-import { MailModule } from './mail/mail.module';
-import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -16,9 +13,6 @@ import { FileModule } from './file/file.module';
       },
     ),
     UserModule,
-    AuthenticationModule,
-    MailModule,
-    FileModule,
   ],
   controllers: [],
   providers: [],
