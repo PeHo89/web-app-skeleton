@@ -53,6 +53,7 @@ export class UserService {
 
     const user = {
       ...remainder,
+      active: true,
       passwordHash: this.securityService.createHash(password),
       roles: ['user'],
     } as User;
@@ -88,6 +89,7 @@ export class UserService {
 
     const admin = {
       ...remainder,
+      active: true,
       passwordHash: this.securityService.createHash(password),
       roles: ['admin', 'user'],
     } as User;
@@ -149,6 +151,16 @@ export class UserService {
     } else {
       return result.toObject();
     }
+  }
+
+  async deleteUserById(id: string): Promise<boolean> {
+    const result = await this.userModel
+      .findByIdAndUpdate(id, { active: false })
+      .exec();
+    if (result) {
+      return true;
+    }
+    return false;
   }
 
   async confirmEmail(userId: string, token: string): Promise<string> {

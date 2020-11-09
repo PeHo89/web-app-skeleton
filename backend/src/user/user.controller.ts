@@ -8,6 +8,7 @@ import {
   Request,
   Query,
   UploadedFile,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
@@ -39,6 +40,12 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async getUserById(@Request() req: any): Promise<UserDto> {
     return (await this.userService.getUserById(req.user.sub, true)) as UserDto;
+  }
+
+  @Delete('profile')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteUserById(@Request() req: any): Promise<boolean> {
+    return this.userService.deleteUserById(req.user.sub);
   }
 
   @Post('profile/image')
