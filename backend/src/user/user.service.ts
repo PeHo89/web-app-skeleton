@@ -25,7 +25,7 @@ export class UserService {
   ) {}
 
   async getAllUser(dto: boolean): Promise<User[] | UserDto[]> {
-    const users = await this.userModel.find().exec();
+    const users = await this.userModel.find({ active: true }).exec();
 
     let result;
 
@@ -140,7 +140,7 @@ export class UserService {
     email: string,
     dto: boolean,
   ): Promise<User | UserDto | null> {
-    const result = await this.userModel.findOne({ email }).exec();
+    const result = await this.userModel.findOne({ email, active: true }).exec();
     if (!result) {
       return null;
     }
@@ -152,7 +152,9 @@ export class UserService {
   }
 
   async getUserById(id: string, dto: boolean): Promise<User | UserDto | null> {
-    const result = await this.userModel.findById(id).exec();
+    const result = await this.userModel
+      .findOne({ _id: id, active: true })
+      .exec();
     if (!result) {
       return null;
     }
