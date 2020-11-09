@@ -43,7 +43,7 @@ export class UserService {
 
   async addUser(newUserDto: NewUserDto, dto: boolean): Promise<User | UserDto> {
     const result = await this.userModel
-      .findOne({ email: newUserDto.email })
+      .findOne({ email: newUserDto.email, active: true })
       .exec();
     if (result) {
       throw new HttpException('Email already exists', HttpStatus.CONFLICT);
@@ -75,7 +75,7 @@ export class UserService {
     dto: boolean,
   ): Promise<User | UserDto> {
     const result = await this.userModel
-      .findOne({ email: newAdminDto.email })
+      .findOne({ email: newAdminDto.email, active: true })
       .exec();
     if (result) {
       throw new HttpException('Email already exists', HttpStatus.CONFLICT);
