@@ -17,6 +17,7 @@ import { NewUserDto } from '../dto/newUser.dto';
 import { File } from '../file/file.interface';
 import { Roles } from '../authentication/roles.decorator';
 import { RolesGuard } from '../authentication/roles.guard';
+import { NewAdminDto } from '../dto/newAdmin.dto';
 
 @Controller('user')
 export class UserController {
@@ -62,5 +63,10 @@ export class UserController {
     const token = query.token;
 
     return this.userService.confirmEmail(userId, token);
+  }
+
+  @Post('admin')
+  async addAdmin(@Body() newAdminDto: NewAdminDto): Promise<UserDto> {
+    return (await this.userService.addAdmin(newAdminDto, true)) as UserDto;
   }
 }

@@ -9,6 +9,7 @@ import { plainToClass } from 'class-transformer';
 import { MailService } from '../mail/mail.service';
 import { FileService } from '../file/file.service';
 import { File } from '../file/file.interface';
+import { NewAdminDto } from '../dto/newAdmin.dto';
 
 @Injectable()
 export class UserService {
@@ -65,6 +66,41 @@ export class UserService {
       return plainToClass(UserDto, savedUser);
     } else {
       return savedUser.toObject();
+    }
+  }
+
+  async addAdmin(
+    newAdminDto: NewAdminDto,
+    dto: boolean,
+  ): Promise<User | UserDto> {
+    const result = await this.userModel
+      .findOne({ email: newAdminDto.email })
+      .exec();
+    if (result) {
+      throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+    }
+
+    const { password, adminSecret, ...remainder } = newAdminDto;
+
+    if (adminSecret !== process.env.ADMIN_SECRET) {
+      throw new HttpException('Invalid admin secret', HttpStatus.FORBIDDEN);
+    }
+
+    const admin = {
+      ...remainder,
+      passwordHash: this.securityService.createHash(password),
+      roles: ['admin', 'user'],
+    } as User;
+
+    const createdAdmin = new this.userModel(admin);
+    let savedAdmin = await createdAdmin.save();
+
+    this.prepareSendingDoubleOptInEmail(savedAdmin);
+
+    if (dto) {
+      return plainToClass(UserDto, savedAdmin);
+    } else {
+      return savedAdmin.toObject();
     }
   }
 
