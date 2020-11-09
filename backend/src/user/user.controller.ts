@@ -15,12 +15,16 @@ import { UserDto } from '../dto/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { NewUserDto } from '../dto/newUser.dto';
 import { File } from '../file/file.interface';
+import { Roles } from '../authentication/roles.decorator';
+import { RolesGuard } from '../authentication/roles.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @Roles('admin')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   async getAllUser(): Promise<UserDto[]> {
     return (await this.userService.getAllUser(true)) as UserDto[];
   }

@@ -1,7 +1,7 @@
 import { Logger, Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Schema, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { UserDto } from '../dto/user.dto';
 import { SecurityService } from '../security/security.service';
 import { NewUserDto } from '../dto/newUser.dto';
@@ -53,6 +53,7 @@ export class UserService {
     const user = {
       ...remainder,
       passwordHash: this.securityService.createHash(password),
+      roles: ['user'],
     } as User;
 
     const createdUser = new this.userModel(user);
@@ -167,5 +168,20 @@ export class UserService {
   async getProfileImage(id: string): Promise<Buffer | null> {
     const profileImagePath = 'user/profile_images';
     return this.fileService.getFile(profileImagePath, id);
+  }
+
+  async userHasRole(id: string, roles: string[]): Promise<boolean> {
+    const result = await this.userModel.findById(id).exec();
+    if (!result || !result.roles) {
+      return false;
+    }
+    for (const role of roles) {
+      for (const userRole of result.roles) {
+        if (userRole === role) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

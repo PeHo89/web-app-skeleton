@@ -17,6 +17,8 @@ export class User extends Document {
   passwordHash: string;
   @Prop()
   doubleOptInDetails?: DoubleOptInDetails;
+  @Prop()
+  roles: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
