@@ -52,6 +52,8 @@ export default {
         context.dispatch("setTokenAndDates", accessTokenDto);
 
         localStorage.setItem("accessTokenDto", JSON.stringify(accessTokenDto));
+
+        context.dispatch("user/loadUser", null, { root: true });
       }
     },
     loadFromLocalStorage(context: any) {
@@ -67,6 +69,8 @@ export default {
       context.dispatch("clearTokenAndDates");
 
       localStorage.removeItem("accessTokenDto");
+
+      context.dispatch("user/clearUser", null, { root: true });
     },
   },
   getters: {
@@ -76,6 +80,9 @@ export default {
         state.expiresAt !== -1 &&
         new Date().getTime() / 1000 < state.expiresAt
       );
+    },
+    getAccessToken(state: any): string {
+      return state.accessToken;
     },
   },
 };

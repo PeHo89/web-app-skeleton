@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from './authentication.service';
 import { AccessTokenDto } from '../dto/accessToken.dto';
 
-@Controller('auth')
+@Controller('authentication')
 export class AuthenticationController {
   constructor(private authenticationService: AuthenticationService) {}
 

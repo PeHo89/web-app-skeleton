@@ -3,6 +3,7 @@ import { LoginDto } from "@/dto/login.dto";
 import { AccessTokenDto } from "@/dto/accessToken.dto";
 
 export class AuthenticationService {
+  static basePath = "authentication";
   static authenticationService: AuthenticationService;
 
   static getSingletonInstance(): AuthenticationService {
@@ -15,12 +16,12 @@ export class AuthenticationService {
   async login(loginDto: LoginDto): Promise<AccessTokenDto | null> {
     try {
       const result = await axios.post(
-        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/auth/login`,
+        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${AuthenticationService.basePath}/login`,
         loginDto
       );
       return result.data as AccessTokenDto;
     } catch (error) {
-      console.error("Failed sending authentication request", error);
+      console.error("Login failed", error);
       return null;
     }
   }
