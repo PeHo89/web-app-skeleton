@@ -26,14 +26,14 @@ export class FileService {
   async getFile(
     path: string,
     filenameWithoutExtension: string,
-  ): Promise<Buffer | null> {
+  ): Promise<string | null> {
     const fullPath = `${process.env.DATA_PATH}/${path}`;
 
     const filesInPath = fs.readdirSync(fullPath);
 
     for (const file of filesInPath) {
       if (file.includes(filenameWithoutExtension)) {
-        return fs.readFileSync(`${fullPath}/${file}`);
+        return fs.readFileSync(`${fullPath}/${file}`).toString('base64');
       }
     }
     return null;

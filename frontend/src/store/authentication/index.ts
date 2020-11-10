@@ -71,6 +71,7 @@ export default {
       localStorage.removeItem("accessTokenDto");
 
       context.dispatch("user/clearUser", null, { root: true });
+      context.dispatch("user/clearProfileImage", null, { root: true });
     },
   },
   getters: {

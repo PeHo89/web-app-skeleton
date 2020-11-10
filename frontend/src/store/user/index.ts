@@ -3,12 +3,14 @@ import { UserDto } from "@/dto/user.dto";
 
 export interface UserState {
   user: UserDto;
+  profileImage: string;
 }
 
 export default {
   namespaced: true,
   state: {
     user: {} as UserDto,
+    profileImage: "",
   } as UserState,
   mutations: {
     setUser(state: any, user: UserDto) {
@@ -17,6 +19,12 @@ export default {
     clearUser(state: any) {
       state.user = {} as UserDto;
     },
+    setProfileImage(state: any, profileImage: string) {
+      state.profileImage = `data:image/jpeg;base64,${profileImage}`;
+    },
+    clearProfileImage(state: any) {
+      state.profileImage = "";
+    },
   },
   actions: {
     setUser(context: any, payload: UserDto) {
@@ -24,6 +32,12 @@ export default {
     },
     clearUser(context: any) {
       context.commit("clearUser");
+    },
+    setProfileImage(context: any, payload: string) {
+      context.commit("setProfileImage", payload);
+    },
+    clearProfileImage(context: any) {
+      context.commit("clearProfileImage");
     },
     async loadUser(context: any) {
       if (!context.rootGetters["authentication/isLoggedIn"]) {
@@ -38,12 +52,31 @@ export default {
 
       if (userDto) {
         context.dispatch("setUser", userDto);
+        context.dispatch("loadProfileImage");
+      }
+    },
+    async loadProfileImage(context: any) {
+      if (!context.rootGetters["authentication/isLoggedIn"]) {
+        return;
+      }
+
+      const userService = UserService.getSingletonInstance();
+
+      const profileImage = await userService.getUserProfileImage(
+        context.rootGetters["authentication/getAccessToken"]
+      );
+
+      if (profileImage) {
+        context.dispatch("setProfileImage", profileImage);
       }
     },
   },
   getters: {
     getUser(state: any): UserDto {
       return state.user;
+    },
+    getProfileImage(state: any): any {
+      return state.profileImage;
     },
   },
 };

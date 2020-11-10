@@ -25,10 +25,11 @@ export class UserService {
     }
   }
 
-  async getUserProfileImage(): Promise<any> {
+  async getUserProfileImage(accessToken: string): Promise<string | null> {
     try {
       const result = await axios.get(
-        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/image`
+        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/image`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       return result.data;
     } catch (error) {

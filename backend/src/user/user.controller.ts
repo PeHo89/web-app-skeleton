@@ -60,7 +60,7 @@ export class UserController {
 
   @Get('profile/image')
   @UseGuards(AuthGuard('jwt'))
-  async getProfileImage(@Request() req: any): Promise<any> {
+  async getProfileImage(@Request() req: any): Promise<string> {
     return this.userService.getProfileImage(req.user.sub);
   }
 

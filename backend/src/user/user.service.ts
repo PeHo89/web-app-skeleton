@@ -225,7 +225,7 @@ export class UserService {
     this.fileService.addFile(profileImagePath, filename, image.buffer);
   }
 
-  async getProfileImage(id: string): Promise<Buffer | null> {
+  async getProfileImage(id: string): Promise<string | null> {
     const profileImagePath = 'user/profile_images';
     return this.fileService.getFile(profileImagePath, id);
   }
