@@ -29,8 +29,8 @@ async function bootstrap() {
   }
 
   Logger.log(
-    `${process.env.APP_NAME || 'app'} started on port ${port}`,
-    'MAIN',
+    `${process.env.APP_NAME || 'app'} listening on port ${port}`,
+    'NestApplication',
   );
 }
 bootstrap();

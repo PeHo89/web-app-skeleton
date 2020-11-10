@@ -36,8 +36,15 @@ export class AuthenticationService {
       username: user.email,
       sub: user._id,
     } as AccessTokenPayloadDto;
+
+    const accessToken = this.jwtService.sign(payload);
+    const expiresAt = (this.jwtService.decode(accessToken) as {
+      [key: string]: any;
+    }).exp;
+
     return {
-      accessToken: this.jwtService.sign(payload),
+      accessToken,
+      expiresAt,
     };
   }
 
