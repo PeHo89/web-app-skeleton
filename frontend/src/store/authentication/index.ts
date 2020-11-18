@@ -43,7 +43,7 @@ export default {
       context.commit("clearExpiresAt");
       context.commit("setLastModificationDate");
     },
-    async login(context: any, payload: LoginDto) {
+    async login(context: any, payload: LoginDto): Promise<boolean> {
       const authenticationService = AuthenticationService.getSingletonInstance();
 
       const accessTokenDto = await authenticationService.login(payload);
@@ -54,7 +54,10 @@ export default {
         localStorage.setItem("accessTokenDto", JSON.stringify(accessTokenDto));
 
         context.dispatch("user/loadUser", null, { root: true });
+
+        return true;
       }
+      return false;
     },
     loadFromLocalStorage(context: any) {
       const localStoredAccessTokenDto = localStorage.getItem("accessTokenDto");

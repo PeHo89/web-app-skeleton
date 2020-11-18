@@ -11,8 +11,11 @@ import Menubar from "primevue/menubar";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
+import Tooltip from "primevue/tooltip";
 
 const app = createApp(App);
+
+app.directive("tooltip", Tooltip);
 
 app.component("Menubar", Menubar);
 app.component("Button", Button);

@@ -1,42 +1,22 @@
 <template>
   <Menubar :model="mainMenu">
-    <template #start
-      ><h1>{{ appName }}</h1></template
-    >
+    <template #start>
+      <h1>{{ appName }}</h1>
+    </template>
     <template v-if="!isLoggedIn" #end>
-      <div class="p-fluid flex">
-        <div class="p-md-4">
-          <span class="p-float-label">
-            <InputText id="email-input" v-model="loginData.username" />
-            <label for="email-input">Email</label>
-          </span>
-        </div>
-        <div class="p-md-4">
-          <span class="p-float-label">
-            <Password
-              id="password-input"
-              v-model="loginData.password"
-              :feedback="false"
-            />
-            <label for="password-input">Password</label>
-          </span>
-        </div>
-        <div class="p-md-2">
-          <Button @click="login" label="Login" />
-        </div>
-      </div>
+      <Button label="Login" icon="pi pi-unlock" @click="$router.push('/login')" />
+      &nbsp;
+      <Button label="Signup" class="p-button-success" icon="pi pi-user-plus" @click="$router.push('/signup')" />
     </template>
     <template v-else #end>
-      <img style="max-width: 66px;" :src="profileImage" />
-      <span style="margin-right: 5px">{{ user.email }}</span>
-      <Button @click="logout" label="Logout" />
+      <img v-tooltip.left="user.email" v-if="profileImage" class="profile-image" :src="profileImage" />
+      <img v-tooltip.left="user.email" v-else class="profile-image" src="/img/profile_image_placeholder.png" />
     </template>
   </Menubar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { LoginDto } from "../dto/login.dto";
 import { UserDto } from "@/dto/user.dto";
 
 export default defineComponent({
@@ -44,11 +24,34 @@ export default defineComponent({
   data() {
     return {
       appName: "",
-      mainMenu: [],
-      loginData: {
-        username: "",
-        password: "",
-      } as LoginDto,
+      mainMenu: [{
+        label: 'Home',
+        icon: 'pi pi-fw pi-home',
+        to: '/home'
+      },{
+        label: 'About',
+        icon: 'pi pi-fw pi-info-circle',
+        to: '/about'
+      },{
+        label: 'User',
+        icon: 'pi pi-fw pi-user',
+        visible: () => this.isLoggedIn,
+        items: [
+          {
+            label: 'Profile',
+            icon: 'pi pi-fw pi-user-edit',
+            to: '/profile'
+          },
+          {
+            separator:true
+          },
+          {
+            label: 'Logout',
+            icon: 'pi pi-fw pi-power-off',
+            command: () => this.logout(),
+          }
+        ],
+      }],
     };
   },
   async created() {
@@ -57,11 +60,9 @@ export default defineComponent({
     await this.$store.dispatch("user/loadUser");
   },
   methods: {
-    async login() {
-      this.$store.dispatch("authentication/login", this.loginData);
-    },
     logout() {
       this.$store.dispatch("authentication/logout");
+      this.$router.push('/');
     },
   },
   computed: {
@@ -71,15 +72,20 @@ export default defineComponent({
     user(): UserDto {
       return this.$store.getters["user/getUser"];
     },
-    profileImage(): string {
+    profileImage(): string|null {
       if (this.$store.getters["user/getProfileImage"]) {
         return this.$store.getters["user/getProfileImage"];
       } else {
-        return '/img/profile_image_placeholder.png';
+        return null;
       }
     },
   },
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.profile-image {
+  max-width: 65px;
+  border-radius: 50px;
+}
+</style>
