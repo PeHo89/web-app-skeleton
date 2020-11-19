@@ -1,5 +1,9 @@
 import axios from "axios";
 import { UserDto } from "@/dto/user.dto";
+import { LoginDto } from "@/dto/login.dto";
+import { AccessTokenDto } from "@/dto/accessToken.dto";
+import { User } from "../../../../backend/src/user/user.schema";
+import { NewUserDto } from "@/dto/newUser.dto";
 
 export class UserService {
   static basePath = "user";
@@ -34,6 +38,19 @@ export class UserService {
       return result.data;
     } catch (error) {
       console.error("Get user profile image failed", error);
+      return null;
+    }
+  }
+
+  async signUp(signUpDto: NewUserDto): Promise<UserDto | null> {
+    try {
+      const result = await axios.post(
+        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}`,
+        signUpDto
+      );
+      return result.data as UserDto;
+    } catch (error) {
+      console.error("Sign up failed", error);
       return null;
     }
   }

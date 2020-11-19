@@ -12,6 +12,7 @@ import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
 import Tooltip from "primevue/tooltip";
+import Checkbox from "primevue/checkbox";
 
 const app = createApp(App);
 
@@ -21,6 +22,7 @@ app.component("Menubar", Menubar);
 app.component("Button", Button);
 app.component("InputText", InputText);
 app.component("Password", Password);
+app.component("Checkbox", Checkbox);
 
 app.use(store);
 app.use(router);

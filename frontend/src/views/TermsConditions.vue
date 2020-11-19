@@ -1,5 +1,5 @@
 <template>
-  <h1 class="center">NotFound</h1>
+  <h1 class="center">Terms & Conditions</h1>
 </template>
 
 <script lang="ts">
@@ -7,7 +7,7 @@ import {defineComponent} from "vue";
 
 
 export default defineComponent({
-  name: "NotFound",
+  name: "TermsConditions",
 });
 </script>
 

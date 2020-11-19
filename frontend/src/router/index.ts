@@ -20,12 +20,12 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/login",
-    name: "LogIn",
+    name: "Login",
     meta: {
       authenticationRequired: false,
     },
     component: () =>
-      import(/* webpackChunkName: "login" */ "../views/LogIn.vue"),
+      import(/* webpackChunkName: "login" */ "../views/Login.vue"),
   },
   {
     path: "/signup",
@@ -44,6 +44,14 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  },
+  {
+    path: "/termsconditions",
+    name: "TermsConditions",
+    component: () =>
+      import(
+        /* webpackChunkName: "termsconditions" */ "../views/TermsConditions.vue"
+      ),
   },
   {
     path: "/:notfound",

@@ -4,13 +4,32 @@
       <h1>{{ appName }}</h1>
     </template>
     <template v-if="!isLoggedIn" #end>
-      <Button label="Login" icon="pi pi-unlock" @click="$router.push('/login')" />
+      <Button
+        label="Login"
+        icon="pi pi-unlock"
+        @click="$router.push('/login')"
+      />
       &nbsp;
-      <Button label="Signup" class="p-button-success" icon="pi pi-user-plus" @click="$router.push('/signup')" />
+      <Button
+        label="Sign Up"
+        class="p-button-success"
+        icon="pi pi-user-plus"
+        @click="$router.push('/signup')"
+      />
     </template>
     <template v-else #end>
-      <img v-tooltip.left="user.email" v-if="profileImage" class="profile-image" :src="profileImage" />
-      <img v-tooltip.left="user.email" v-else class="profile-image" src="/img/profile_image_placeholder.png" />
+      <img
+        v-tooltip.left="user.email"
+        v-if="profileImage"
+        class="profile-image"
+        :src="profileImage"
+      />
+      <img
+        v-tooltip.left="user.email"
+        v-else
+        class="profile-image"
+        src="/img/profile_image_placeholder.png"
+      />
     </template>
   </Menubar>
 </template>
@@ -24,34 +43,40 @@ export default defineComponent({
   data() {
     return {
       appName: "",
-      mainMenu: [{
-        label: 'Home',
-        icon: 'pi pi-fw pi-home',
-        to: '/home'
-      },{
-        label: 'About',
-        icon: 'pi pi-fw pi-info-circle',
-        to: '/about'
-      },{
-        label: 'User',
-        icon: 'pi pi-fw pi-user',
-        visible: () => this.isLoggedIn,
-        items: [
-          {
-            label: 'Profile',
-            icon: 'pi pi-fw pi-user-edit',
-            to: '/profile'
-          },
-          {
-            separator:true
-          },
-          {
-            label: 'Logout',
-            icon: 'pi pi-fw pi-power-off',
-            command: () => this.logout(),
-          }
-        ],
-      }],
+      mainMenu: [
+        {
+          label: "Home",
+          icon: "pi pi-fw pi-home",
+          to: "/home",
+        },
+        {
+          label: "About",
+          icon: "pi pi-fw pi-info-circle",
+          to: "/about",
+        },
+        {
+          label: "User",
+          icon: "pi pi-fw pi-user",
+          // @ts-ignore
+          visible: () => this.isLoggedIn,
+          items: [
+            {
+              label: "Profile",
+              icon: "pi pi-fw pi-user-edit",
+              to: "/profile",
+            },
+            {
+              separator: true,
+            },
+            {
+              label: "Logout",
+              icon: "pi pi-fw pi-power-off",
+              // @ts-ignore
+              command: () => this.logout(),
+            },
+          ],
+        },
+      ],
     };
   },
   async created() {
@@ -62,7 +87,7 @@ export default defineComponent({
   methods: {
     logout() {
       this.$store.dispatch("authentication/logout");
-      this.$router.push('/');
+      this.$router.push("/");
     },
   },
   computed: {
@@ -72,7 +97,7 @@ export default defineComponent({
     user(): UserDto {
       return this.$store.getters["user/getUser"];
     },
-    profileImage(): string|null {
+    profileImage(): string | null {
       if (this.$store.getters["user/getProfileImage"]) {
         return this.$store.getters["user/getProfileImage"];
       } else {
