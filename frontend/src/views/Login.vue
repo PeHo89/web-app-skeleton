@@ -1,31 +1,33 @@
 <template>
-  <h1 class="center">Login</h1>
-  <div id="login-form-container" class="p-shadow-12">
-    <div class="input-container">
-      <span class="p-float-label">
-        <InputText id="email-input" class="full-width" v-model="loginData.username" />
-        <label for="email-input">Email</label>
-      </span>
-    </div>
-    <div class="input-container">
-      <span class="p-float-label">
-        <InputText
-          id="password-input"
-          class="full-width"
-          v-model="loginData.password"
-          type="password"
-        />
-        <label for="password-input">Password</label>
-      </span>
-    </div>
-    <div class="input-container">
-      <div class="half-width-centered">
-        <Button @click="login" label="Login" class="full-width"/>
+  <div>
+    <h1 class="center">Login</h1>
+    <div id="login-form-container" class="p-shadow-12">
+      <div class="input-container">
+        <span class="p-float-label">
+          <InputText id="email-input" class="full-width" v-model="loginData.username" />
+          <label for="email-input">Email</label>
+        </span>
       </div>
-    </div>
-    <div class="input-container">
-      <div class="center">
-        <Button class="p-button-text p-button-secondary" label="Forgot Password?" @click="$router.push('/resetpassword')"/>
+      <div class="input-container">
+        <span class="p-float-label">
+          <InputText
+            id="password-input"
+            class="full-width"
+            v-model="loginData.password"
+            type="password"
+          />
+          <label for="password-input">Password</label>
+        </span>
+      </div>
+      <div class="input-container">
+        <div class="half-width-centered">
+          <Button @click="login" label="Login" class="full-width"/>
+        </div>
+      </div>
+      <div class="input-container">
+        <div class="center">
+          <Button class="p-button-text p-button-secondary" label="Forgot Password?" @click="$router.push('/resetpassword')"/>
+        </div>
       </div>
     </div>
   </div>
@@ -54,7 +56,7 @@ export default defineComponent({
       if (result) {
         this.$router.push("/");
       } else {
-        console.error("login failed");
+        this.$toast.add({severity:'error', summary: 'Login Failed', detail:'Email or password are wrong', life: 5000});
       }
     },
   },

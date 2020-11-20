@@ -13,8 +13,12 @@ import InputText from "primevue/inputtext";
 import Password from "primevue/password";
 import Tooltip from "primevue/tooltip";
 import Checkbox from "primevue/checkbox";
+import Toast from "primevue/toast";
+import ToastService from "primevue/toastservice";
 
 const app = createApp(App);
+
+app.use(ToastService);
 
 app.directive("tooltip", Tooltip);
 
@@ -23,6 +27,7 @@ app.component("Button", Button);
 app.component("InputText", InputText);
 app.component("Password", Password);
 app.component("Checkbox", Checkbox);
+app.component("Toast", Toast);
 
 app.use(store);
 app.use(router);

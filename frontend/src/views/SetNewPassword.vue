@@ -1,15 +1,17 @@
 <template>
-  <h1 class="center">Set New Password</h1>
-  <div id="reset-password-form-container" class="p-shadow-12">
-    <div class="input-container">
-      <span class="p-float-label">
-        <InputText id="password-input" class="full-width" v-model="passwordDto.password" type="password" />
-        <label for="password-input">Password</label>
-      </span>
-    </div>
-    <div class="input-container">
-      <div>
-        <Button @click="setNewPassword" label="Set Password"/>
+  <div>
+    <h1 class="center">Set New Password</h1>
+    <div id="reset-password-form-container" class="p-shadow-12">
+      <div class="input-container">
+        <span class="p-float-label">
+          <InputText id="password-input" class="full-width" v-model="passwordDto.password" type="password" />
+          <label for="password-input">Password</label>
+        </span>
+      </div>
+      <div class="input-container">
+        <div>
+          <Button @click="setNewPassword" label="Set Password"/>
+        </div>
       </div>
     </div>
   </div>
@@ -36,7 +38,7 @@ export default defineComponent({
 
       const result = await userService.setNewPassword(this.$route.query.userId, this.$route.query.token, this.passwordDto);
 
-      console.log(result);
+      this.$toast.add({severity:'info', summary: 'Set New Password', detail: result, life: 5000});
 
       this.$router.push('/');
     }

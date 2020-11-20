@@ -1,6 +1,11 @@
 <template>
   <TheMenubar></TheMenubar>
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <transition name="fade" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
+  <Toast position="bottom-right" />
 </template>
 
 <script lang="ts">
@@ -31,5 +36,14 @@ export default defineComponent({
   position: relative;
   width: 50%;
   left: 25%;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

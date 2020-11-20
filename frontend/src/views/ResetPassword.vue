@@ -1,15 +1,17 @@
 <template>
-  <h1 class="center">Reset Password</h1>
-  <div id="reset-password-form-container" class="p-shadow-12">
-    <div class="input-container">
-      <span class="p-float-label">
-        <InputText id="email-input" class="full-width" v-model="emailDto.email" />
-        <label for="email-input">Email</label>
-      </span>
-    </div>
-    <div class="input-container">
-      <div>
-        <Button @click="resetPassword" label="Reset Password" />
+  <div>
+    <h1 class="center">Reset Password</h1>
+    <div id="reset-password-form-container" class="p-shadow-12">
+      <div class="input-container">
+        <span class="p-float-label">
+          <InputText id="email-input" class="full-width" v-model="emailDto.email" />
+          <label for="email-input">Email</label>
+        </span>
+      </div>
+      <div class="input-container">
+        <div>
+          <Button @click="resetPassword" label="Reset Password" />
+        </div>
       </div>
     </div>
   </div>
@@ -36,7 +38,7 @@ export default defineComponent({
 
       const result = await userService.resetPassword(this.emailDto);
 
-      console.log(result);
+      this.$toast.add({severity:'info', summary: 'Issued Password Reset', detail: result, life: 5000});
 
       this.$router.push('/');
     }

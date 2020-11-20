@@ -1,29 +1,31 @@
 <template>
-  <h1 class="center">Sign Up</h1>
-  <div id="signup-form-container" class="p-shadow-12">
-    <div class="input-container">
-      <span class="p-float-label">
-        <InputText id="email-input" class="full-width" v-model="signUpData.email" />
-        <label for="email-input">Email</label>
-      </span>
-    </div>
-    <div class="input-container">
-      <span class="p-float-label">
-        <InputText
-            id="password-input"
-            class="full-width"
-            v-model="signUpData.password"
-            type="password"
-        />
-        <label for="password-input">Password</label>
-      </span>
-    </div>
-    <div class="input-container">
-      <Checkbox id="accepted-terms-and-conditions-checkbox" v-model="acceptedTermsAndConditions" :binary="true"/><label for="accepted-terms-and-conditions-checkbox"> I accept <router-link :to="'/termsconditions'">terms & conditions</router-link>.</label>
-    </div>
-    <div class="input-container">
-      <div class="half-width-centered">
-        <Button @click="signUp" label="Sign Up" class="p-button-success full-width"/>
+  <div>
+    <h1 class="center">Sign Up</h1>
+    <div id="signup-form-container" class="p-shadow-12">
+      <div class="input-container">
+        <span class="p-float-label">
+          <InputText id="email-input" class="full-width" v-model="signUpData.email" />
+          <label for="email-input">Email</label>
+        </span>
+      </div>
+      <div class="input-container">
+        <span class="p-float-label">
+          <InputText
+              id="password-input"
+              class="full-width"
+              v-model="signUpData.password"
+              type="password"
+          />
+          <label for="password-input">Password</label>
+        </span>
+      </div>
+      <div class="input-container">
+        <Checkbox id="accepted-terms-and-conditions-checkbox" v-model="acceptedTermsAndConditions" :binary="true"/><label for="accepted-terms-and-conditions-checkbox"> I accept <router-link :to="'/termsconditions'">terms & conditions</router-link>.</label>
+      </div>
+      <div class="input-container">
+        <div class="half-width-centered">
+          <Button @click="signUp" label="Sign Up" class="p-button-success full-width"/>
+        </div>
       </div>
     </div>
   </div>
@@ -60,7 +62,7 @@ export default defineComponent({
         if (result) {
           this.$router.push("/");
         } else {
-          console.error("login failed");
+          this.$toast.add({severity:'error', summary: 'Sign Up Failed', detail:'Sign up failed due to server error', life: 5000});
         }
       }
     },

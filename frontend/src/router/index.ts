@@ -12,6 +12,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/profile",
     name: "Profile",
     meta: {
+      //user must be authenticated
       authenticationRequired: true,
     },
     component: () =>
@@ -21,6 +22,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "Login",
     meta: {
+      //user must be un-authenticated
       authenticationRequired: false,
     },
     component: () =>
@@ -61,6 +63,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/admin",
     name: "Admin",
     meta: {
+      //user must has admin role
       requiredRole: "admin",
     },
     component: () =>
