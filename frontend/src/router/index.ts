@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
 import store from "../store";
 
 const routes: Array<RouteRecordRaw> = [
@@ -35,6 +34,28 @@ const routes: Array<RouteRecordRaw> = [
     },
     component: () =>
       import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
+  },
+  {
+    path: "/resetpassword",
+    name: "ResetPassword",
+    meta: {
+      authenticationRequired: false,
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "resetpassword" */ "../views/ResetPassword.vue"
+      ),
+  },
+  {
+    path: "/setnewpassword",
+    name: "SetNewPassword",
+    meta: {
+      authenticationRequired: false,
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "setnewpassword" */ "../views/SetNewPassword.vue"
+      ),
   },
   {
     path: "/about",

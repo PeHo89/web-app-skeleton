@@ -58,6 +58,7 @@ export class UserService {
       active: true,
       passwordHash: this.securityService.createHash(password),
       roles: ['user'],
+      setNewPasswordDetails: null,
     } as User;
 
     const createdUser = new this.userModel(user);
@@ -98,6 +99,7 @@ export class UserService {
       active: true,
       passwordHash: this.securityService.createHash(password),
       roles: ['admin', 'user'],
+      setNewPasswordDetails: null,
     } as User;
 
     const createdAdmin = new this.userModel(admin);
@@ -228,5 +230,88 @@ export class UserService {
   async getProfileImage(id: string): Promise<string | null> {
     const profileImagePath = 'user/profile_images';
     return this.fileService.getFile(profileImagePath, id);
+  }
+
+  async resetPassword(email: string): Promise<string> {
+    const user = await this.userModel.findOne({ email, active: true }).exec();
+
+    if (!user) {
+      return 'No user found with email ' + email;
+    }
+
+    this.prepareSendingSetNewPasswordEmail(user);
+
+    return 'Sent email with instructions to set new password';
+  }
+
+  private async prepareSendingSetNewPasswordEmail(
+    savedUser: User,
+  ): Promise<void> {
+    const randomToken = this.securityService.createRandomToken(32);
+
+    const setNewPasswordLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/setnewpassword?userId=${savedUser._id}&token=${randomToken}`;
+
+    const success = await this.mailService.sendSetNewPasswordMail(
+      savedUser.email,
+      setNewPasswordLink,
+    );
+
+    if (success) {
+      savedUser.setNewPasswordDetails = {
+        setNewPasswordToken: randomToken,
+        setNewPasswordInProgress: true,
+        setNewPasswordSentTimestamp: new Date().toISOString(),
+        setNewPasswordConfirmedTimestamp: null,
+      };
+      savedUser.save();
+    }
+  }
+
+  async setNewPassword(
+    userId: string,
+    token: string,
+    newPassword: string,
+  ): Promise<string> {
+    const result = await this.userModel.findById(userId).exec();
+    if (!result) {
+      return 'Invalid user id';
+    }
+    if (
+      !result.setNewPasswordDetails ||
+      !result.setNewPasswordDetails.setNewPasswordInProgress
+    ) {
+      return 'No password reset issued';
+    }
+    if (
+      result.setNewPasswordDetails &&
+      result.setNewPasswordDetails.setNewPasswordToken !== token
+    ) {
+      return 'Invalid token';
+    }
+
+    const hashedNewPassword = this.securityService.createHash(newPassword);
+
+    const updateResult = await this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        'setNewPasswordDetails.setNewPasswordConfirmedTimestamp': new Date().toISOString(),
+        'setNewPasswordDetails.setNewPasswordInProgress': false,
+        passwordHash: hashedNewPassword,
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (
+      updateResult.setNewPasswordDetails.setNewPasswordConfirmedTimestamp !==
+      null
+    ) {
+      this.logger.log(`Successfully set new password for userId '${userId}'`);
+      return 'Successfully set new password';
+    } else {
+      this.logger.log(`Failed setting new password for userId '${userId}'`);
+      return 'Failed setting new password';
+    }
   }
 }

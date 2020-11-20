@@ -25,7 +25,7 @@
     </div>
     <div class="input-container">
       <div class="center">
-        <Button class="p-button-text p-button-danger" label="Forgot Password?" @click="onForgotPasswordClicked"/>
+        <Button class="p-button-text p-button-danger" label="Forgot Password?" @click="$router.push('/resetpassword')"/>
       </div>
     </div>
   </div>
@@ -57,9 +57,6 @@ export default defineComponent({
         console.error("login failed");
       }
     },
-    onForgotPasswordClicked() {
-      console.log('t.b.i.');
-    }
   },
 });
 </script>

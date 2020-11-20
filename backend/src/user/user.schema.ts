@@ -9,6 +9,13 @@ export interface DoubleOptInDetails {
   doubleOptInToken: string;
 }
 
+export interface SetNewPasswordDetails {
+  setNewPasswordSentTimestamp: string;
+  setNewPasswordConfirmedTimestamp: string;
+  setNewPasswordToken: string;
+  setNewPasswordInProgress: boolean;
+}
+
 @Schema()
 export class User extends Document {
   @Prop()
@@ -21,6 +28,8 @@ export class User extends Document {
   roles: string[];
   @Prop()
   active: boolean;
+  @Prop()
+  setNewPasswordDetails: SetNewPasswordDetails;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

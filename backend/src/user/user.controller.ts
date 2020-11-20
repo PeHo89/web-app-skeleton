@@ -9,6 +9,7 @@ import {
   Query,
   UploadedFile,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
@@ -19,6 +20,8 @@ import { File } from '../file/file.interface';
 import { Roles } from '../authentication/roles.decorator';
 import { RolesGuard } from '../authentication/roles.guard';
 import { NewAdminDto } from '../dto/newAdmin.dto';
+import { EmailDto } from '../dto/email.dto';
+import { PasswordDto } from '../dto/password.dto';
 
 @Controller('user')
 export class UserController {
@@ -75,5 +78,21 @@ export class UserController {
   @Post('admin')
   async addAdmin(@Body() newAdminDto: NewAdminDto): Promise<UserDto> {
     return (await this.userService.addAdmin(newAdminDto, true)) as UserDto;
+  }
+
+  @Put('resetpassword')
+  async resetPassword(@Body() emailDto: EmailDto): Promise<string> {
+    return this.userService.resetPassword(emailDto.email);
+  }
+
+  @Put('setnewpassword')
+  async setNewPassword(
+    @Query() query: any,
+    @Body() passwordDto: PasswordDto,
+  ): Promise<string> {
+    const userId = query.userId;
+    const token = query.token;
+
+    return this.userService.setNewPassword(userId, token, passwordDto.password);
   }
 }

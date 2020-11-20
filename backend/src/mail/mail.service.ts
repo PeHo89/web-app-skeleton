@@ -38,4 +38,27 @@ export class MailService {
       return false;
     }
   }
+
+  public async sendSetNewPasswordMail(
+    receiver: string,
+    link: string,
+  ): Promise<boolean> {
+    try {
+      await this.mailAccount.sendMail({
+        from: `"${process.env.APP_NAME}" <${process.env.APP_EMAIL}>`,
+        to: receiver,
+        subject: 'Please set new password',
+        text: `Please click the following link to set a new password: ${link}. We will see you again soon!`,
+      });
+      this.logger.log(
+        `Successfully sent email for setting new password to '${receiver}'`,
+      );
+      return true;
+    } catch (e) {
+      this.logger.error(
+        `Failed sending email for setting new password to '${receiver}': ${e.message}`,
+      );
+      return false;
+    }
+  }
 }

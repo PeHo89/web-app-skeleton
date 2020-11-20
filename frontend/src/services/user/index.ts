@@ -4,6 +4,8 @@ import { LoginDto } from "@/dto/login.dto";
 import { AccessTokenDto } from "@/dto/accessToken.dto";
 import { User } from "../../../../backend/src/user/user.schema";
 import { NewUserDto } from "@/dto/newUser.dto";
+import { EmailDto } from "@/dto/email.dto";
+import { PasswordDto } from "@/dto/password.dto";
 
 export class UserService {
   static basePath = "user";
@@ -51,6 +53,36 @@ export class UserService {
       return result.data as UserDto;
     } catch (error) {
       console.error("Sign up failed", error);
+      return null;
+    }
+  }
+
+  async resetPassword(emailDto: EmailDto): Promise<string | null> {
+    try {
+      const result = await axios.put(
+        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/resetpassword`,
+        emailDto
+      );
+      return result.data as string;
+    } catch (error) {
+      console.error("Resetting password failed", error);
+      return null;
+    }
+  }
+
+  async setNewPassword(
+    userId: string,
+    token: string,
+    passwordDto: PasswordDto
+  ): Promise<string | null> {
+    try {
+      const result = await axios.put(
+        `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/setnewpassword?userId=${userId}&token=${token}`,
+        passwordDto
+      );
+      return result.data as string;
+    } catch (error) {
+      console.error("Setting new password failed", error);
       return null;
     }
   }
