@@ -58,6 +58,15 @@ const routes: Array<RouteRecordRaw> = [
       ),
   },
   {
+    path: "/admin",
+    name: "Admin",
+    meta: {
+      requiredRole: "admin",
+    },
+    component: () =>
+      import(/* webpackChunkName: "admin" */ "../views/Admin.vue"),
+  },
+  {
     path: "/about",
     name: "About",
     // route level code-splitting
@@ -88,23 +97,34 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.authenticationRequired === undefined) {
-    next();
-    return;
+  //handle requiredRole in route meta data
+  if (to.meta.requiredRole !== undefined) {
+    const userRoles = store.getters["user/getUser"].roles;
+
+    if (userRoles && userRoles.includes(to.meta.requiredRole)) {
+      next();
+      return;
+    } else {
+      next("/");
+      return;
+    }
   }
 
-  if (
-    to.meta.authenticationRequired === true &&
-    !store.getters["authentication/isLoggedIn"]
-  ) {
-    next("/login");
-    return;
-  } else if (
-    to.meta.authenticationRequired === false &&
-    store.getters["authentication/isLoggedIn"]
-  ) {
-    next("/profile");
-    return;
+  //handle authenticationRequired in route meta data
+  if (to.meta.authenticationRequired !== undefined) {
+    if (
+      to.meta.authenticationRequired === true &&
+      !store.getters["authentication/isLoggedIn"]
+    ) {
+      next("/login");
+      return;
+    } else if (
+      to.meta.authenticationRequired === false &&
+      store.getters["authentication/isLoggedIn"]
+    ) {
+      next("/profile");
+      return;
+    }
   }
   next();
   return;

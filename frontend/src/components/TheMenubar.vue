@@ -55,6 +55,13 @@ export default defineComponent({
           to: "/about",
         },
         {
+          label: "Admin",
+          icon: "pi pi-fw pi-cog",
+          to: "/admin",
+          // @ts-ignore
+          visible: () => this.isLoggedIn && this.isAdmin,
+        },
+        {
           label: "User",
           icon: "pi pi-fw pi-user",
           // @ts-ignore
@@ -93,6 +100,9 @@ export default defineComponent({
   computed: {
     isLoggedIn(): boolean {
       return this.$store.getters["authentication/isLoggedIn"];
+    },
+    isAdmin(): boolean {
+      return this.$store.getters["user/isAdmin"];
     },
     user(): UserDto {
       return this.$store.getters["user/getUser"];

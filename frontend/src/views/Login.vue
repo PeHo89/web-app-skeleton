@@ -25,7 +25,7 @@
     </div>
     <div class="input-container">
       <div class="center">
-        <Button class="p-button-text p-button-danger" label="Forgot Password?" @click="$router.push('/resetpassword')"/>
+        <Button class="p-button-text p-button-secondary" label="Forgot Password?" @click="$router.push('/resetpassword')"/>
       </div>
     </div>
   </div>

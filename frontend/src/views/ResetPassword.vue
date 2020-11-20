@@ -8,8 +8,8 @@
       </span>
     </div>
     <div class="input-container">
-      <div class="full-width-centered">
-        <Button @click="resetPassword" label="Reset Password" class="full-width"/>
+      <div>
+        <Button @click="resetPassword" label="Reset Password" />
       </div>
     </div>
   </div>

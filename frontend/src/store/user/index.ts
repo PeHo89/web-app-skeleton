@@ -75,6 +75,13 @@ export default {
     getUser(state: any): UserDto {
       return state.user;
     },
+    isAdmin(state: any): boolean {
+      if (state.user && state.user.roles) {
+        return state.user.roles.includes("admin");
+      } else {
+        return false;
+      }
+    },
     getProfileImage(state: any): any {
       return state.profileImage;
     },
