@@ -46,9 +46,15 @@ export default {
 
       const userService = UserService.getSingletonInstance();
 
-      const userDto = await userService.getUserProfile(
-        context.rootGetters["authentication/getAccessToken"]
-      );
+      let userDto;
+
+      try {
+        userDto = await userService.getUserProfile(
+          context.rootGetters["authentication/getAccessToken"]
+        );
+      } catch (error) {
+        console.error(error);
+      }
 
       if (userDto) {
         context.dispatch("setUser", userDto);
@@ -62,9 +68,15 @@ export default {
 
       const userService = UserService.getSingletonInstance();
 
-      const profileImage = await userService.getUserProfileImage(
-        context.rootGetters["authentication/getAccessToken"]
-      );
+      let profileImage;
+
+      try {
+        profileImage = await userService.getUserProfileImage(
+          context.rootGetters["authentication/getAccessToken"]
+        );
+      } catch (error) {
+        console.error(error);
+      }
 
       if (profileImage) {
         context.dispatch("setProfileImage", profileImage);

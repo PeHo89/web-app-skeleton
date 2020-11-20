@@ -180,19 +180,22 @@ export class UserService {
   async confirmEmail(userId: string, token: string): Promise<string> {
     const result = await this.userModel.findById(userId).exec();
     if (!result) {
-      return 'Invalid user id';
+      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
     }
     if (
       result.doubleOptInDetails &&
       result.doubleOptInDetails.doubleOptInConfirmedTimestamp !== null
     ) {
-      return 'Email already confirmed';
+      throw new HttpException(
+        'Email already confirmed',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (
       result.doubleOptInDetails &&
       result.doubleOptInDetails.doubleOptInToken !== token
     ) {
-      return 'Invalid token';
+      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
     }
 
     const updateResult = await this.userModel.findByIdAndUpdate(
@@ -212,7 +215,10 @@ export class UserService {
       return 'Successfully confirmed email';
     } else {
       this.logger.log(`Failed confirming email '${updateResult.email}'`);
-      return 'Failed confirming email';
+      throw new HttpException(
+        'Failed confirming email',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -236,7 +242,13 @@ export class UserService {
     const user = await this.userModel.findOne({ email, active: true }).exec();
 
     if (!user) {
-      return 'No user found with email ' + email;
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: `No user found with email '${email}'`,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     this.prepareSendingSetNewPasswordEmail(user);
@@ -274,19 +286,22 @@ export class UserService {
   ): Promise<string> {
     const result = await this.userModel.findById(userId).exec();
     if (!result) {
-      return 'Invalid user id';
+      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
     }
     if (
       !result.setNewPasswordDetails ||
       !result.setNewPasswordDetails.setNewPasswordInProgress
     ) {
-      return 'No password reset issued';
+      throw new HttpException(
+        'No password reset issued',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (
       result.setNewPasswordDetails &&
       result.setNewPasswordDetails.setNewPasswordToken !== token
     ) {
-      return 'Invalid token';
+      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
     }
 
     const hashedNewPassword = this.securityService.createHash(newPassword);
@@ -311,7 +326,10 @@ export class UserService {
       return 'Successfully set new password';
     } else {
       this.logger.log(`Failed setting new password for userId '${userId}'`);
-      return 'Failed setting new password';
+      throw new HttpException(
+        'Failed setting new password',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

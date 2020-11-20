@@ -52,7 +52,13 @@ export default defineComponent({
     async signUp() {
       const userService = UserService.getSingletonInstance();
 
-      const result = await userService.signUp(this.signUpData);
+      let result;
+
+      try {
+        result = await userService.signUp(this.signUpData);
+      } catch (error) {
+        console.error(error);
+      }
 
       if (result) {
         const result = await this.$store.dispatch(

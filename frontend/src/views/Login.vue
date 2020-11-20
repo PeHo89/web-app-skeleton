@@ -56,7 +56,7 @@ export default defineComponent({
       if (result) {
         this.$router.push("/");
       } else {
-        this.$toast.add({severity:'error', summary: 'Login Failed', detail:'Email or password are wrong', life: 5000});
+        this.$toast.add({severity:'error', summary: 'Login Failed', detail:'Invalid email or password', life: 5000});
       }
     },
   },

@@ -36,11 +36,17 @@ export default defineComponent({
     async setNewPassword() {
       const userService = UserService.getSingletonInstance();
 
-      const result = await userService.setNewPassword(this.$route.query.userId, this.$route.query.token, this.passwordDto);
+      try {
+        const result = await userService.setNewPassword(this.$route.query.userId, this.$route.query.token, this.passwordDto);
 
-      this.$toast.add({severity:'info', summary: 'Set New Password', detail: result, life: 5000});
+        this.$toast.add({severity: 'success', summary: 'Set New Password', detail: result, life: 5000});
 
-      this.$router.push('/');
+        this.$router.push('/');
+
+      } catch (error) {
+        console.error(error);
+        this.$toast.add({severity:'error', summary: 'Error on setting new password', detail: error, life: 5000});
+      }
     }
   }
 });

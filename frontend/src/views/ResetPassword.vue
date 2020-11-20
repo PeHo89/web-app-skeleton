@@ -36,11 +36,16 @@ export default defineComponent({
     async resetPassword() {
       const userService = UserService.getSingletonInstance();
 
-      const result = await userService.resetPassword(this.emailDto);
+      try {
+        const result = await userService.resetPassword(this.emailDto);
 
-      this.$toast.add({severity:'info', summary: 'Issued Password Reset', detail: result, life: 5000});
+        this.$toast.add({severity:'success', summary: 'Issued Password Reset', detail: result, life: 5000});
+        this.$router.push('/');
 
-      this.$router.push('/');
+      } catch (error) {
+        console.error(JSON.stringify(error));
+        this.$toast.add({severity:'error', summary: 'Error on issuing password reset', detail: error, life: 5000});
+      }
     }
   }
 });

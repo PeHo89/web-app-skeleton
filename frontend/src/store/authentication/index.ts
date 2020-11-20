@@ -46,7 +46,12 @@ export default {
     async login(context: any, payload: LoginDto): Promise<boolean> {
       const authenticationService = AuthenticationService.getSingletonInstance();
 
-      const accessTokenDto = await authenticationService.login(payload);
+      let accessTokenDto;
+      try {
+        accessTokenDto = await authenticationService.login(payload);
+      } catch (error) {
+        console.error(error);
+      }
 
       if (accessTokenDto) {
         context.dispatch("setTokenAndDates", accessTokenDto);
