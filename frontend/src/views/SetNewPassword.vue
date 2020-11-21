@@ -44,8 +44,7 @@ export default defineComponent({
         this.$router.push('/');
 
       } catch (error) {
-        console.error(error);
-        this.$toast.add({severity:'error', summary: 'Error on setting new password', detail: error, life: 5000});
+        this.$toast.add({severity:'error', summary: 'Error on setting new password', detail: error.response.data.error, life: 5000});
       }
     }
   }

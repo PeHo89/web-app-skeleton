@@ -43,8 +43,7 @@ export default defineComponent({
         this.$router.push('/');
 
       } catch (error) {
-        console.error(JSON.stringify(error));
-        this.$toast.add({severity:'error', summary: 'Error on issuing password reset', detail: error, life: 5000});
+        this.$toast.add({severity:'error', summary: 'Error on issuing password reset', detail: error.response.data.error, life: 5000});
       }
     }
   }

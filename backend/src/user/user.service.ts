@@ -48,7 +48,13 @@ export class UserService {
       .findOne({ email: newUserDto.email, active: true })
       .exec();
     if (result) {
-      throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'Email already exists',
+        },
+        HttpStatus.CONFLICT,
+      );
     }
 
     const { password, ...remainder } = newUserDto;
@@ -85,13 +91,25 @@ export class UserService {
       .findOne({ email: newAdminDto.email, active: true })
       .exec();
     if (result) {
-      throw new HttpException('Email already exists', HttpStatus.CONFLICT);
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'Email already exists',
+        },
+        HttpStatus.CONFLICT,
+      );
     }
 
     const { password, adminSecret, ...remainder } = newAdminDto;
 
     if (adminSecret !== process.env.ADMIN_SECRET) {
-      throw new HttpException('Invalid admin secret', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'Invalid admin secret',
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const admin = {
@@ -180,14 +198,23 @@ export class UserService {
   async confirmEmail(userId: string, token: string): Promise<string> {
     const result = await this.userModel.findById(userId).exec();
     if (!result) {
-      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (
       result.doubleOptInDetails &&
       result.doubleOptInDetails.doubleOptInConfirmedTimestamp !== null
     ) {
       throw new HttpException(
-        'Email already confirmed',
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Email already confirmed',
+        },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -195,7 +222,13 @@ export class UserService {
       result.doubleOptInDetails &&
       result.doubleOptInDetails.doubleOptInToken !== token
     ) {
-      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid token',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const updateResult = await this.userModel.findByIdAndUpdate(
@@ -216,7 +249,10 @@ export class UserService {
     } else {
       this.logger.log(`Failed confirming email '${updateResult.email}'`);
       throw new HttpException(
-        'Failed confirming email',
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed confirming email',
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -286,14 +322,23 @@ export class UserService {
   ): Promise<string> {
     const result = await this.userModel.findById(userId).exec();
     if (!result) {
-      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (
       !result.setNewPasswordDetails ||
       !result.setNewPasswordDetails.setNewPasswordInProgress
     ) {
       throw new HttpException(
-        'No password reset issued',
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'No password reset issued',
+        },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -301,7 +346,13 @@ export class UserService {
       result.setNewPasswordDetails &&
       result.setNewPasswordDetails.setNewPasswordToken !== token
     ) {
-      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid token',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const hashedNewPassword = this.securityService.createHash(newPassword);
@@ -327,7 +378,10 @@ export class UserService {
     } else {
       this.logger.log(`Failed setting new password for userId '${userId}'`);
       throw new HttpException(
-        'Failed setting new password',
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed setting new password',
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
