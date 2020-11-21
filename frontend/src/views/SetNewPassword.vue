@@ -39,7 +39,7 @@ export default defineComponent({
       try {
         const result = await userService.setNewPassword(this.$route.query.userId, this.$route.query.token, this.passwordDto);
 
-        this.$toast.add({severity: 'success', summary: 'Set New Password', detail: result, life: 5000});
+        this.$toast.add({severity: 'success', summary: 'Set new password', detail: result, life: 5000});
 
         this.$router.push('/');
 

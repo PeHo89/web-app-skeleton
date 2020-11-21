@@ -39,7 +39,7 @@ export default defineComponent({
       try {
         const result = await userService.resetPassword(this.emailDto);
 
-        this.$toast.add({severity:'success', summary: 'Issued Password Reset', detail: result, life: 5000});
+        this.$toast.add({severity:'success', summary: 'Issued password reset', detail: result, life: 5000});
         this.$router.push('/');
 
       } catch (error) {

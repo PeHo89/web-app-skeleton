@@ -3,6 +3,8 @@ import { UserDto } from "@/dto/user.dto";
 import { NewUserDto } from "@/dto/newUser.dto";
 import { EmailDto } from "@/dto/email.dto";
 import { PasswordDto } from "@/dto/password.dto";
+import { UpdatePasswordDto } from "@/dto/updatePassword.dto";
+import { UpdateEmailDto } from "@/dto/updateEmail.dto";
 
 export class UserService {
   static basePath = "user";
@@ -55,6 +57,30 @@ export class UserService {
     const result = await axios.put(
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/setnewpassword?userId=${userId}&token=${token}`,
       passwordDto
+    );
+    return result.data as string;
+  }
+
+  async updateEmail(
+    accessToken: string,
+    updateEmailDto: UpdateEmailDto
+  ): Promise<string> {
+    const result = await axios.put(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/email`,
+      updateEmailDto,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return result.data as string;
+  }
+
+  async updatePassword(
+    accessToken: string,
+    updatePasswordDto: UpdatePasswordDto
+  ): Promise<string> {
+    const result = await axios.put(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/password`,
+      updatePasswordDto,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     );
     return result.data as string;
   }

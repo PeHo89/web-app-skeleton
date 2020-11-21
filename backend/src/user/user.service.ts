@@ -11,6 +11,8 @@ import { FileService } from '../file/file.service';
 import { File } from '../file/file.interface';
 import { NewAdminDto } from '../dto/newAdmin.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { UpdateEmailDto } from '../dto/updateEmail.dto';
+import { UpdatePasswordDto } from '../dto/updatePassword.dto';
 
 @Injectable()
 export class UserService {
@@ -281,7 +283,7 @@ export class UserService {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          error: `No user found with email '${email}'`,
+          error: 'No user found with email',
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -381,6 +383,109 @@ export class UserService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Failed setting new password',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  public async updateEmail(
+    userId: string,
+    updateEmailDto: UpdateEmailDto,
+  ): Promise<string> {
+    const result = await this.userModel.findById(userId).exec();
+    if (!result) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (result.email !== updateEmailDto.oldEmail) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: "Email doesn't match",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const newEmailCheck = await this.userModel
+      .findOne({ email: updateEmailDto.newEmail, active: true })
+      .exec();
+    if (newEmailCheck) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'Email already exists',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+    result.email = updateEmailDto.newEmail;
+
+    const updateResult = await result.save();
+
+    this.prepareSendingDoubleOptInEmail(updateResult);
+
+    if (updateResult !== null) {
+      this.logger.log(`Successfully updated email for userId '${userId}'`);
+      return 'Successfully updated email';
+    } else {
+      this.logger.log(`Failed updating email for userId '${userId}'`);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed updating email',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  public async updatePassword(
+    userId: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<string> {
+    const result = await this.userModel.findById(userId).exec();
+    if (!result) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (
+      result.passwordHash !==
+      this.securityService.createHash(updatePasswordDto.oldPassword)
+    ) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: "Password doesn't match",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    result.passwordHash = this.securityService.createHash(
+      updatePasswordDto.newPassword,
+    );
+
+    const updateResult = await result.save();
+
+    if (updateResult !== null) {
+      this.logger.log(`Successfully updated password for userId '${userId}'`);
+      return 'Successfully updated password';
+    } else {
+      this.logger.log(`Failed updating password for userId '${userId}'`);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed updating password',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

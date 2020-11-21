@@ -22,6 +22,8 @@ import { RolesGuard } from '../authentication/roles.guard';
 import { NewAdminDto } from '../dto/newAdmin.dto';
 import { EmailDto } from '../dto/email.dto';
 import { PasswordDto } from '../dto/password.dto';
+import { UpdatePasswordDto } from '../dto/updatePassword.dto';
+import { UpdateEmailDto } from '../dto/updateEmail.dto';
 
 @Controller('user')
 export class UserController {
@@ -65,6 +67,24 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async getProfileImage(@Request() req: any): Promise<string> {
     return this.userService.getProfileImage(req.user.sub);
+  }
+
+  @Put('profile/email')
+  @UseGuards(AuthGuard('jwt'))
+  async updateEmail(
+    @Request() req: any,
+    @Body() updateEmailDto: UpdateEmailDto,
+  ) {
+    return this.userService.updateEmail(req.user.sub, updateEmailDto);
+  }
+
+  @Put('profile/password')
+  @UseGuards(AuthGuard('jwt'))
+  async updatePassword(
+    @Request() req: any,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    return this.userService.updatePassword(req.user.sub, updatePasswordDto);
   }
 
   @Get('confirm')
