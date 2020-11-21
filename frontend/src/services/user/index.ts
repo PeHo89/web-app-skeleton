@@ -84,4 +84,11 @@ export class UserService {
     );
     return result.data as string;
   }
+
+  async confirmEmail(userId: string, token: string): Promise<string> {
+    const result = await axios.put(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/confirm?userId=${userId}&token=${token}`
+    );
+    return result.data as string;
+  }
 }

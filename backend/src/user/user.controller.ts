@@ -87,7 +87,7 @@ export class UserController {
     return this.userService.updatePassword(req.user.sub, updatePasswordDto);
   }
 
-  @Get('confirm')
+  @Put('confirm')
   async confirmEmail(@Query() query: any): Promise<string> {
     const userId = query.userId;
     const token = query.token;

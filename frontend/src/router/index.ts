@@ -60,6 +60,14 @@ const routes: Array<RouteRecordRaw> = [
       ),
   },
   {
+    path: "/confirmemail",
+    name: "ConfirmEmail",
+    component: () =>
+      import(
+        /* webpackChunkName: "confirmemail" */ "../views/ConfirmEmail.vue"
+      ),
+  },
+  {
     path: "/admin",
     name: "Admin",
     meta: {

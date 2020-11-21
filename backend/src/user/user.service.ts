@@ -141,7 +141,7 @@ export class UserService {
   private async prepareSendingDoubleOptInEmail(savedUser: User): Promise<void> {
     const randomToken = this.securityService.createRandomToken(32);
 
-    const doubleOptInConfirmationLink = `${process.env.BACKEND_PROTOCOL}://${process.env.BACKEND_HOST}:${process.env.BACKEND_PORT}/user/confirm?userId=${savedUser._id}&token=${randomToken}`;
+    const doubleOptInConfirmationLink = `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/confirmemail?userId=${savedUser._id}&token=${randomToken}&email=${savedUser.email}`;
 
     const success = await this.mailService.sendDoubleOptInMail(
       savedUser.email,

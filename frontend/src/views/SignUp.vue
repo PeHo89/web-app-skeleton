@@ -66,9 +66,10 @@ export default defineComponent({
             {username: this.signUpData.email, password: this.signUpData.password} as LoginDto
         );
         if (result) {
+          this.$toast.add({severity:'success', summary: 'Signed up', detail:'Welcome on board', life: 5000});
           this.$router.push("/");
         } else {
-          this.$toast.add({severity:'error', summary: 'Sign Up Failed', detail:'Sign up failed due to server error', life: 5000});
+          this.$toast.add({severity:'error', summary: 'Sign up failed', detail:'Sign up failed due to server error', life: 5000});
         }
       }
     },
