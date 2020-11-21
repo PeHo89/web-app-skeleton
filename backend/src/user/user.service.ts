@@ -260,7 +260,7 @@ export class UserService {
     }
   }
 
-  async addProfileImage(id: string, image: File): Promise<void> {
+  async addProfileImage(id: string, image: File): Promise<string> {
     const profileImagePath = 'user/profile_images';
 
     const filename = `${id}.${
@@ -269,6 +269,8 @@ export class UserService {
 
     this.fileService.deleteFile(profileImagePath, id);
     this.fileService.addFile(profileImagePath, filename, image.buffer);
+
+    return 'Successfully uploaded profile image';
   }
 
   async getProfileImage(id: string): Promise<string | null> {

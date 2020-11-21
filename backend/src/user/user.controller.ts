@@ -59,8 +59,8 @@ export class UserController {
   async addProfileImage(
     @Request() req: any,
     @UploadedFile() image: File,
-  ): Promise<void> {
-    this.userService.addProfileImage(req.user.sub, image);
+  ): Promise<string> {
+    return this.userService.addProfileImage(req.user.sub, image);
   }
 
   @Get('profile/image')

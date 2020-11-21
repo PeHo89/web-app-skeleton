@@ -15,6 +15,7 @@ import Tooltip from "primevue/tooltip";
 import Checkbox from "primevue/checkbox";
 import Toast from "primevue/toast";
 import ToastService from "primevue/toastservice";
+import FileUpload from "primevue/fileupload";
 
 const app = createApp(App);
 
@@ -28,6 +29,7 @@ app.component("InputText", InputText);
 app.component("Password", Password);
 app.component("Checkbox", Checkbox);
 app.component("Toast", Toast);
+app.component("FileUpload", FileUpload);
 
 app.use(store);
 app.use(router);
