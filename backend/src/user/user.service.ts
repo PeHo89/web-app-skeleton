@@ -1,5 +1,5 @@
 import { Logger, Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { User, UserDocument } from './user.schema';
+import { PersonalInformation, User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDto } from '../dto/user.dto';
@@ -67,6 +67,7 @@ export class UserService {
       passwordHash: this.securityService.createHash(password),
       roles: ['user'],
       setNewPasswordDetails: null,
+      personalInformation: null,
     } as User;
 
     const createdUser = new this.userModel(user);
@@ -120,6 +121,7 @@ export class UserService {
       passwordHash: this.securityService.createHash(password),
       roles: ['admin', 'user'],
       setNewPasswordDetails: null,
+      personalInformation: null,
     } as User;
 
     const createdAdmin = new this.userModel(admin);
@@ -488,6 +490,43 @@ export class UserService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Failed updating password',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  public async updatePersonalInformation(
+    userId: string,
+    personalInformation: PersonalInformation,
+  ): Promise<string> {
+    const result = await this.userModel.findById(userId).exec();
+    if (!result) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    result.personalInformation = personalInformation;
+
+    const updateResult = await result.save();
+
+    if (updateResult !== null) {
+      this.logger.log(
+        `Successfully updated personal information for userId '${userId}'`,
+      );
+      return 'Successfully updated personal information';
+    } else {
+      this.logger.log(
+        `Failed updating personal information for userId '${userId}'`,
+      );
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed updating personal information',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

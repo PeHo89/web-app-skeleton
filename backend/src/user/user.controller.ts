@@ -24,6 +24,7 @@ import { EmailDto } from '../dto/email.dto';
 import { PasswordDto } from '../dto/password.dto';
 import { UpdatePasswordDto } from '../dto/updatePassword.dto';
 import { UpdateEmailDto } from '../dto/updateEmail.dto';
+import { PersonalInformation } from './user.schema';
 
 @Controller('user')
 export class UserController {
@@ -76,6 +77,18 @@ export class UserController {
     @Body() updateEmailDto: UpdateEmailDto,
   ) {
     return this.userService.updateEmail(req.user.sub, updateEmailDto);
+  }
+
+  @Put('profile/personalinformation')
+  @UseGuards(AuthGuard('jwt'))
+  async updatePersonalInformation(
+    @Request() req: any,
+    @Body() personalInformation: PersonalInformation,
+  ) {
+    return this.userService.updatePersonalInformation(
+      req.user.sub,
+      personalInformation,
+    );
   }
 
   @Put('profile/password')

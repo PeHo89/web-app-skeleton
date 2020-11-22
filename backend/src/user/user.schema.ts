@@ -3,19 +3,6 @@ import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-export interface DoubleOptInDetails {
-  doubleOptInSentTimestamp: string;
-  doubleOptInConfirmedTimestamp: string;
-  doubleOptInToken: string;
-}
-
-export interface SetNewPasswordDetails {
-  setNewPasswordSentTimestamp: string;
-  setNewPasswordConfirmedTimestamp: string;
-  setNewPasswordToken: string;
-  setNewPasswordInProgress: boolean;
-}
-
 @Schema()
 export class User extends Document {
   @Prop()
@@ -30,6 +17,30 @@ export class User extends Document {
   active: boolean;
   @Prop()
   setNewPasswordDetails: SetNewPasswordDetails;
+  @Prop()
+  personalInformation: PersonalInformation;
+}
+
+export interface DoubleOptInDetails {
+  doubleOptInSentTimestamp: string;
+  doubleOptInConfirmedTimestamp: string;
+  doubleOptInToken: string;
+}
+
+export interface SetNewPasswordDetails {
+  setNewPasswordSentTimestamp: string;
+  setNewPasswordConfirmedTimestamp: string;
+  setNewPasswordToken: string;
+  setNewPasswordInProgress: boolean;
+}
+
+export interface PersonalInformation {
+  firstName: string;
+  lastName: string;
+  streetAndNumber: string;
+  postalCode: string;
+  city: string;
+  country: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
