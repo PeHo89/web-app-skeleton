@@ -9,6 +9,11 @@ export interface PersonalInformation {
   country: string;
 }
 
+export interface PersonalSettings {
+  newsletterSubscription: Date | null;
+  notificationSubscription: string;
+}
+
 @Exclude()
 export class UserDto {
   @Expose()
@@ -21,4 +26,6 @@ export class UserDto {
   roles: string[];
   @Expose()
   personalInformation: PersonalInformation;
+  @Expose()
+  personalSettings: PersonalSettings;
 }

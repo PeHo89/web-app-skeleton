@@ -13,6 +13,7 @@ import TheUpdateEmailCard from "@/components/TheUpdateEmailCard.vue";
 import TheUpdatePersonalInformationCard from "@/components/TheUpdatePersonalInformationCard.vue";
 import TheUpdateProfileImageCard from "@/components/TheUpdateProfileImageCard.vue";
 import TheUpdatePasswordCard from "@/components/TheUpdatePasswordCard.vue";
+import TheUpdatePersonalSettingsCard from "@/components/TheUpdatePersonalSettingsCard.vue";
 
 
 export default defineComponent({
@@ -22,6 +23,7 @@ export default defineComponent({
     TheUpdateProfileImageCard,
     TheUpdatePasswordCard,
     TheUpdatePersonalInformationCard,
+    TheUpdatePersonalSettingsCard,
   },
   data() {
     return {
@@ -51,6 +53,12 @@ export default defineComponent({
           // @ts-ignore
           command:() => this.selectComponent('TheUpdatePasswordCard'),
         },
+        {
+          label: 'Settings',
+          icon: 'pi pi-cog',
+          // @ts-ignore
+          command:() => this.selectComponent('TheUpdatePersonalSettingsCard'),
+        },
       ]
     };
   },
@@ -65,7 +73,7 @@ export default defineComponent({
 <style scoped>
 .slide-enter-active,
 .slide-leave-active {
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .slide-enter-from {

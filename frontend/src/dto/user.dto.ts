@@ -7,10 +7,16 @@ export interface PersonalInformation {
   country: string;
 }
 
+export interface PersonalSettings {
+  newsletterSubscription: Date | null;
+  notificationSubscription: string;
+}
+
 export interface UserDto {
   id: string;
   email: string;
   accessToken: string;
   roles: string[];
   personalInformation: PersonalInformation;
+  personalSettings: PersonalSettings;
 }

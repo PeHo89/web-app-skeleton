@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PersonalInformation, UserDto } from "@/dto/user.dto";
+import { PersonalInformation, PersonalSettings, UserDto } from "@/dto/user.dto";
 import { NewUserDto } from "@/dto/newUser.dto";
 import { EmailDto } from "@/dto/email.dto";
 import { PasswordDto } from "@/dto/password.dto";
@@ -92,6 +92,18 @@ export class UserService {
     const result = await axios.put(
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/personalinformation`,
       personalInformation,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return result.data as string;
+  }
+
+  async updatePersonalSettings(
+    accessToken: string,
+    personalSettings: PersonalSettings
+  ): Promise<string> {
+    const result = await axios.put(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/personalsettings`,
+      personalSettings,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
     return result.data as string;

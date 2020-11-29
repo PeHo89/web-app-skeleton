@@ -19,6 +19,8 @@ export class User extends Document {
   setNewPasswordDetails: SetNewPasswordDetails;
   @Prop()
   personalInformation: PersonalInformation;
+  @Prop()
+  personalSettings: PersonalSettings;
 }
 
 export interface DoubleOptInDetails {
@@ -41,6 +43,11 @@ export interface PersonalInformation {
   postalCode: string;
   city: string;
   country: string;
+}
+
+export interface PersonalSettings {
+  newsletterSubscription: Date | null;
+  notificationSubscription: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

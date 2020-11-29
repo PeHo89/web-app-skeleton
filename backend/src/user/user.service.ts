@@ -1,8 +1,12 @@
 import { Logger, Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PersonalInformation, User, UserDocument } from './user.schema';
+import { User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDto } from '../dto/user.dto';
+import {
+  PersonalSettings,
+  PersonalInformation,
+  UserDto,
+} from '../dto/user.dto';
 import { SecurityService } from '../security/security.service';
 import { NewUserDto } from '../dto/newUser.dto';
 import { plainToClass } from 'class-transformer';
@@ -68,6 +72,7 @@ export class UserService {
       roles: ['user'],
       setNewPasswordDetails: null,
       personalInformation: null,
+      personalSettings: null,
     } as User;
 
     const createdUser = new this.userModel(user);
@@ -122,6 +127,7 @@ export class UserService {
       roles: ['admin', 'user'],
       setNewPasswordDetails: null,
       personalInformation: null,
+      personalSettings: null,
     } as User;
 
     const createdAdmin = new this.userModel(admin);
@@ -527,6 +533,43 @@ export class UserService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'Failed updating personal information',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  public async updatePersonalSettings(
+    userId: string,
+    personalSettings: PersonalSettings,
+  ): Promise<string> {
+    const result = await this.userModel.findById(userId).exec();
+    if (!result) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    result.personalSettings = personalSettings;
+
+    const updateResult = await result.save();
+
+    if (updateResult !== null) {
+      this.logger.log(
+        `Successfully updated personal settings for userId '${userId}'`,
+      );
+      return 'Successfully updated personal settings';
+    } else {
+      this.logger.log(
+        `Failed updating personal settings for userId '${userId}'`,
+      );
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed updating personal settings',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
