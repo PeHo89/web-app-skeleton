@@ -41,8 +41,8 @@ export default defineComponent({
     return {
       updateEmailDto: {
         oldEmail: "",
-        newEmail: "",
-      } as UpdateEmailDto,
+        newEmail: ""
+      } as UpdateEmailDto
     };
   },
   created() {
@@ -62,7 +62,7 @@ export default defineComponent({
           severity: "success",
           summary: "Email updated",
           detail: result,
-          life: 5000,
+          life: 5000
         });
         await this.$store.dispatch("user/loadUser");
         this.resetForm();
@@ -71,7 +71,7 @@ export default defineComponent({
           severity: "error",
           summary: "Error on updating email",
           detail: error.response.data.error,
-          life: 5000,
+          life: 5000
         });
       }
     },
@@ -82,13 +82,13 @@ export default defineComponent({
         this.updateEmailDto.oldEmail = "";
       }
       this.updateEmailDto.newEmail = "";
-    },
+    }
   },
   computed: {
     user(): UserDto {
       return this.$store.getters["user/getUser"];
-    },
-  },
+    }
+  }
 });
 </script>
 

@@ -15,8 +15,8 @@ import TheMenubar from "@/components/TheMenubar.vue";
 export default defineComponent({
   name: "App",
   components: {
-    TheMenubar,
-  },
+    TheMenubar
+  }
 });
 </script>
 

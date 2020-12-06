@@ -1,8 +1,8 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import "./registerServiceWorker";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "primevue/resources/themes/saga-blue/theme.css";

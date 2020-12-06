@@ -3,13 +3,18 @@
     <h1 class="center">Confirm Email</h1>
     <div id="confirm-email-form-container" class="p-shadow-12">
       <div class="input-container">
-        <p>Would you like to confirm your email '{{$route.query.email}}'?</p>
+        <p>Would you like to confirm your email '{{ $route.query.email }}'?</p>
       </div>
       <div class="input-container">
         <div>
-          <Button class="p-button-success" type="success" @click="confirm" label="Confirm"/>
+          <Button
+            class="p-button-success"
+            type="success"
+            @click="confirm"
+            label="Confirm"
+          />
           &nbsp;
-          <Button class="p-button-danger" @click="dismiss" label="Dismiss"/>
+          <Button class="p-button-danger" @click="dismiss" label="Dismiss" />
         </div>
       </div>
     </div>
@@ -17,9 +22,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {UserService} from "@/services/user";
-
+import { defineComponent } from "vue";
+import { UserService } from "@/services/user";
 
 export default defineComponent({
   name: "ConfirmEmail",
@@ -28,20 +32,36 @@ export default defineComponent({
       const userService = UserService.getSingletonInstance();
 
       try {
-        const result = await userService.confirmEmail(this.$route.query.userId, this.$route.query.token);
+        const result = await userService.confirmEmail(
+          this.$route.query.userId,
+          this.$route.query.token
+        );
 
-        this.$toast.add({severity: 'success', summary: 'Email confirmed', detail: result, life: 5000});
+        this.$toast.add({
+          severity: "success",
+          summary: "Email confirmed",
+          detail: result,
+          life: 5000
+        });
 
-        this.$router.push('/');
-
+        this.$router.push("/");
       } catch (error) {
-        this.$toast.add({severity:'error', summary: 'Error on confirming email', detail: error.response.data.error, life: 5000});
+        this.$toast.add({
+          severity: "error",
+          summary: "Error on confirming email",
+          detail: error.response.data.error,
+          life: 5000
+        });
       }
-
     },
     dismiss() {
-      this.$toast.add({severity:'success', summary: 'Email not confirmed', detail: 'Please confirm your email soon', life: 5000});
-      this.$router.push('/');
+      this.$toast.add({
+        severity: "success",
+        summary: "Email not confirmed",
+        detail: "Please confirm your email soon",
+        life: 5000
+      });
+      this.$router.push("/");
     }
   }
 });

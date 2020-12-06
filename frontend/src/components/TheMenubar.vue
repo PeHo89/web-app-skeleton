@@ -47,19 +47,19 @@ export default defineComponent({
         {
           label: "Home",
           icon: "pi pi-fw pi-home",
-          to: "/home",
+          to: "/home"
         },
         {
           label: "About",
           icon: "pi pi-fw pi-info-circle",
-          to: "/about",
+          to: "/about"
         },
         {
           label: "Admin",
           icon: "pi pi-fw pi-cog",
           to: "/admin",
           // @ts-ignore
-          visible: () => this.isLoggedIn && this.isAdmin,
+          visible: () => this.isLoggedIn && this.isAdmin
         },
         {
           label: "User",
@@ -70,20 +70,20 @@ export default defineComponent({
             {
               label: "Profile",
               icon: "pi pi-fw pi-user-edit",
-              to: "/profile",
+              to: "/profile"
             },
             {
-              separator: true,
+              separator: true
             },
             {
               label: "Logout",
               icon: "pi pi-fw pi-power-off",
               // @ts-ignore
-              command: () => this.logout(),
-            },
-          ],
-        },
-      ],
+              command: () => this.logout()
+            }
+          ]
+        }
+      ]
     };
   },
   async created() {
@@ -95,7 +95,7 @@ export default defineComponent({
     logout() {
       this.$store.dispatch("authentication/logout");
       this.$router.push("/");
-    },
+    }
   },
   computed: {
     isLoggedIn(): boolean {
@@ -113,8 +113,8 @@ export default defineComponent({
       } else {
         return null;
       }
-    },
-  },
+    }
+  }
 });
 </script>
 

@@ -13,7 +13,7 @@ export default {
   state: {
     accessToken: "",
     expiresAt: -1,
-    lastModification: {} as Date,
+    lastModification: {} as Date
   } as AuthenticationState,
   mutations: {
     setAccessToken(state: any, accessToken: string) {
@@ -30,7 +30,7 @@ export default {
     },
     clearExpiresAt(state: any) {
       state.expiresAt = -1;
-    },
+    }
   },
   actions: {
     setTokenAndDates(context: any, payload: AccessTokenDto) {
@@ -80,7 +80,7 @@ export default {
 
       context.dispatch("user/clearUser", null, { root: true });
       context.dispatch("user/clearProfileImage", null, { root: true });
-    },
+    }
   },
   getters: {
     isLoggedIn(state: any): boolean {
@@ -92,6 +92,6 @@ export default {
     },
     getAccessToken(state: any): string {
       return state.accessToken;
-    },
-  },
+    }
+  }
 };

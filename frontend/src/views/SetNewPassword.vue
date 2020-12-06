@@ -4,13 +4,18 @@
     <div id="reset-password-form-container" class="p-shadow-12">
       <div class="input-container">
         <span class="p-float-label">
-          <InputText id="password-input" class="full-width" v-model="passwordDto.password" type="password" />
+          <InputText
+            id="password-input"
+            class="full-width"
+            v-model="passwordDto.password"
+            type="password"
+          />
           <label for="password-input">Password</label>
         </span>
       </div>
       <div class="input-container">
         <div>
-          <Button @click="setNewPassword" label="Set Password"/>
+          <Button @click="setNewPassword" label="Set Password" />
         </div>
       </div>
     </div>
@@ -18,33 +23,45 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {PasswordDto} from "@/dto/password.dto";
-import {UserService} from "@/services/user";
-
+import { defineComponent } from "vue";
+import { PasswordDto } from "@/dto/password.dto";
+import { UserService } from "@/services/user";
 
 export default defineComponent({
   name: "SetNewPassword",
   data() {
     return {
       passwordDto: {
-        password: ''
+        password: ""
       } as PasswordDto
-    }
+    };
   },
   methods: {
     async setNewPassword() {
       const userService = UserService.getSingletonInstance();
 
       try {
-        const result = await userService.setNewPassword(this.$route.query.userId, this.$route.query.token, this.passwordDto);
+        const result = await userService.setNewPassword(
+          this.$route.query.userId,
+          this.$route.query.token,
+          this.passwordDto
+        );
 
-        this.$toast.add({severity: 'success', summary: 'Set new password', detail: result, life: 5000});
+        this.$toast.add({
+          severity: "success",
+          summary: "Set new password",
+          detail: result,
+          life: 5000
+        });
 
-        this.$router.push('/');
-
+        this.$router.push("/");
       } catch (error) {
-        this.$toast.add({severity:'error', summary: 'Error on setting new password', detail: error.response.data.error, life: 5000});
+        this.$toast.add({
+          severity: "error",
+          summary: "Error on setting new password",
+          detail: error.response.data.error,
+          life: 5000
+        });
       }
     }
   }

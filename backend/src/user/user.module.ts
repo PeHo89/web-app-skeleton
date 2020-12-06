@@ -1,12 +1,13 @@
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserController } from './user.controller';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { User, UserSchema } from './user.schema';
 import { SecurityModule } from '../security/security.module';
 import { MailModule } from '../mail/mail.module';
 import { FileModule } from '../file/file.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     MailModule,
     FileModule,
     AuthenticationModule,
+    NotificationModule,
   ],
   controllers: [UserController],
   providers: [UserService],

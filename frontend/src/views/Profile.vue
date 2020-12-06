@@ -15,7 +15,6 @@ import TheUpdateProfileImageCard from "@/components/TheUpdateProfileImageCard.vu
 import TheUpdatePasswordCard from "@/components/TheUpdatePasswordCard.vue";
 import TheUpdatePersonalSettingsCard from "@/components/TheUpdatePersonalSettingsCard.vue";
 
-
 export default defineComponent({
   name: "Profile",
   components: {
@@ -23,50 +22,51 @@ export default defineComponent({
     TheUpdateProfileImageCard,
     TheUpdatePasswordCard,
     TheUpdatePersonalInformationCard,
-    TheUpdatePersonalSettingsCard,
+    TheUpdatePersonalSettingsCard
   },
   data() {
     return {
-      selectedComponent: 'TheUpdatePersonalInformationCard',
+      selectedComponent: "TheUpdatePersonalInformationCard",
       items: [
         {
-          label: 'Personal Information',
-          icon: 'pi pi-id-card',
-          // @ts-ignore
-          command:() => this.selectComponent('TheUpdatePersonalInformationCard'),
+          label: "Personal Information",
+          icon: "pi pi-id-card",
+          command: () =>
+              // @ts-ignore
+              this.selectComponent("TheUpdatePersonalInformationCard")
         },
         {
-          label: 'Profile Image',
-          icon: 'pi pi-image',
+          label: "Profile Image",
+          icon: "pi pi-image",
           // @ts-ignore
-          command:() => this.selectComponent('TheUpdateProfileImageCard'),
+          command: () => this.selectComponent("TheUpdateProfileImageCard")
         },
         {
-          label: 'Email',
-          icon: 'pi pi-envelope',
+          label: "Email",
+          icon: "pi pi-envelope",
           // @ts-ignore
-          command:() => this.selectComponent('TheUpdateEmailCard'),
+          command: () => this.selectComponent("TheUpdateEmailCard")
         },
         {
-          label: 'Password',
-          icon: 'pi pi-key',
+          label: "Password",
+          icon: "pi pi-key",
           // @ts-ignore
-          command:() => this.selectComponent('TheUpdatePasswordCard'),
+          command: () => this.selectComponent("TheUpdatePasswordCard")
         },
         {
-          label: 'Settings',
-          icon: 'pi pi-cog',
+          label: "Settings",
+          icon: "pi pi-cog",
           // @ts-ignore
-          command:() => this.selectComponent('TheUpdatePersonalSettingsCard'),
-        },
+          command: () => this.selectComponent("TheUpdatePersonalSettingsCard")
+        }
       ]
     };
   },
   methods: {
     selectComponent(component: string) {
       this.selectedComponent = component;
-    },
-  },
+    }
+  }
 });
 </script>
 
@@ -79,7 +79,6 @@ export default defineComponent({
 .slide-enter-from {
   transform: translateX(-100%);
   opacity: 0;
-
 }
 .slide-leave-to {
   transform: translateX(100%);

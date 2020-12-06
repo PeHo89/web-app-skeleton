@@ -10,7 +10,7 @@ export default {
   namespaced: true,
   state: {
     user: {} as UserDto,
-    profileImage: "",
+    profileImage: ""
   } as UserState,
   mutations: {
     setUser(state: any, user: UserDto) {
@@ -24,7 +24,7 @@ export default {
     },
     clearProfileImage(state: any) {
       state.profileImage = "";
-    },
+    }
   },
   actions: {
     setUser(context: any, payload: UserDto) {
@@ -81,7 +81,7 @@ export default {
       if (profileImage) {
         context.dispatch("setProfileImage", profileImage);
       }
-    },
+    }
   },
   getters: {
     getUser(state: any): UserDto {
@@ -96,6 +96,6 @@ export default {
     },
     getProfileImage(state: any): any {
       return state.profileImage;
-    },
-  },
+    }
+  }
 };

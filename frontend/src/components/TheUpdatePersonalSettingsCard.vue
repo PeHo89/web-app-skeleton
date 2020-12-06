@@ -3,15 +3,29 @@
     <h4 class="center">Update Personal Settings</h4>
     <div class="input-container">
       <label class="switch-label" for="newsletter-switch">Newsletter</label>
-      <InputSwitch id="newsletter-switch" v-model="personalSettingsForm.newsletter" @change="onNewsletterSwitchChange" />
+      <InputSwitch
+        id="newsletter-switch"
+        v-model="personalSettingsForm.newsletter"
+        @change="onNewsletterSwitchChange"
+      />
     </div>
     <div class="input-container">
-      <label class="switch-label" for="notification-switch">Notifications</label>
-      <InputSwitch id="notification-switch" v-model="personalSettingsForm.notification" @change="onNotificationSwitchChange" />
+      <label class="switch-label" for="notification-switch"
+        >Notifications</label
+      >
+      <InputSwitch
+        id="notification-switch"
+        v-model="personalSettingsForm.notification"
+        @change="onNotificationSwitchChange"
+      />
     </div>
     <div class="input-container">
       <div>
-        <Button @click="updatePersonalSettings" label="Update Personal Settings" class="center" />
+        <Button
+          @click="updatePersonalSettings"
+          label="Update Personal Settings"
+          class="center"
+        />
       </div>
     </div>
   </div>
@@ -20,7 +34,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { UserService } from "@/services/user";
-import {PersonalSettings, UserDto} from "@/dto/user.dto";
+import { PersonalSettings, UserDto } from "@/dto/user.dto";
+import { Helper } from "@/common/Helper";
 
 export default defineComponent({
   name: "TheUpdatePersonalSettingsCard",
@@ -28,12 +43,12 @@ export default defineComponent({
     return {
       personalSettingsForm: {
         newsletter: false,
-        notification: false,
+        notification: false
       },
       personalSettings: {
         newsletterSubscription: null,
-        notificationSubscription: '',
-      } as PersonalSettings,
+        notificationSubscription: null
+      } as PersonalSettings
     };
   },
   created() {
@@ -53,7 +68,7 @@ export default defineComponent({
           severity: "success",
           summary: "Personal settings updated",
           detail: result,
-          life: 5000,
+          life: 5000
         });
         await this.$store.dispatch("user/loadUser");
       } catch (error) {
@@ -61,7 +76,7 @@ export default defineComponent({
           severity: "error",
           summary: "Error on updating personal settings",
           detail: error.response.data.error,
-          life: 5000,
+          life: 5000
         });
       }
     },
@@ -71,10 +86,12 @@ export default defineComponent({
         this.personalSettingsForm.notification = false;
       } else {
         this.personalSettings.newsletterSubscription = this.user.personalSettings.newsletterSubscription;
-        this.personalSettingsForm.newsletter = this.user.personalSettings.newsletterSubscription !== null;
+        this.personalSettingsForm.newsletter =
+          this.user.personalSettings.newsletterSubscription !== null;
 
         this.personalSettings.notificationSubscription = this.user.personalSettings.notificationSubscription;
-        this.personalSettingsForm.notification = this.user.personalSettings.notificationSubscription !== '';
+        this.personalSettingsForm.notification =
+          this.user.personalSettings.notificationSubscription !== null;
       }
     },
     onNewsletterSwitchChange() {
@@ -90,43 +107,54 @@ export default defineComponent({
 
         let requestedPermission = false;
 
-        if (permission === 'default') {
+        if (permission === "default") {
           requestedPermission = true;
           permission = await Notification.requestPermission();
         }
 
-        if (permission === 'denied' && !requestedPermission) {
+        if (permission === "denied" && !requestedPermission) {
           this.$toast.add({
             severity: "warn",
             summary: "You have denied to receive notifications",
             detail: "Please reset notification permissions in your browser",
-            life: 5000,
+            life: 5000
           });
         }
 
-        if (permission === 'granted') {
+        if (permission === "granted") {
           if (this.personalSettingsForm.notification) {
+            const serviceWorker = await navigator.serviceWorker.getRegistration();
 
-            //TODO
-            this.personalSettings.notificationSubscription = 't.b.i.';
+            if (!serviceWorker) {
+              // this.personalSettings.notificationSubscription = null;
+              return;
+            }
+
+            const pushSubscription = await serviceWorker.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: Helper.urlBase64ToUint8Array(
+                process.env.VUE_APP_VAPID_PUBLIC_KEY
+              )
+            });
+
+            this.personalSettings.notificationSubscription = pushSubscription;
           } else {
-            this.personalSettings.notificationSubscription = '';
+            this.personalSettings.notificationSubscription = null;
           }
-
         } else {
           this.personalSettingsForm.notification = false;
-          this.personalSettings.notificationSubscription = '';
+          this.personalSettings.notificationSubscription = null;
         }
       } else {
-        this.personalSettings.notificationSubscription = '';
+        this.personalSettings.notificationSubscription = null;
       }
-    },
+    }
   },
   computed: {
     user(): UserDto {
       return this.$store.getters["user/getUser"];
-    },
-  },
+    }
+  }
 });
 </script>
 

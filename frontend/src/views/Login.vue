@@ -4,7 +4,11 @@
     <div id="login-form-container" class="p-shadow-12">
       <div class="input-container">
         <span class="p-float-label">
-          <InputText id="email-input" class="full-width" v-model="loginData.username" />
+          <InputText
+            id="email-input"
+            class="full-width"
+            v-model="loginData.username"
+          />
           <label for="email-input">Email</label>
         </span>
       </div>
@@ -21,12 +25,16 @@
       </div>
       <div class="input-container">
         <div class="half-width-centered">
-          <Button @click="login" label="Login" class="full-width"/>
+          <Button @click="login" label="Login" class="full-width" />
         </div>
       </div>
       <div class="input-container">
         <div class="center">
-          <Button class="p-button-text p-button-secondary" label="Forgot Password?" @click="$router.push('/resetpassword')"/>
+          <Button
+            class="p-button-text p-button-secondary"
+            label="Forgot Password?"
+            @click="$router.push('/resetpassword')"
+          />
         </div>
       </div>
     </div>
@@ -43,8 +51,8 @@ export default defineComponent({
     return {
       loginData: {
         username: "",
-        password: "",
-      } as LoginDto,
+        password: ""
+      } as LoginDto
     };
   },
   methods: {
@@ -56,10 +64,15 @@ export default defineComponent({
       if (result) {
         this.$router.push("/");
       } else {
-        this.$toast.add({severity:'error', summary: 'Error on logging in', detail:'Wrong credentials', life: 5000});
+        this.$toast.add({
+          severity: "error",
+          summary: "Error on logging in",
+          detail: "Wrong credentials",
+          life: 5000
+        });
       }
-    },
-  },
+    }
+  }
 });
 </script>
 

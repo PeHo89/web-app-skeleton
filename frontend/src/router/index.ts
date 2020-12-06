@@ -6,76 +6,74 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     alias: ["/home"],
     name: "Home",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+    component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue")
   },
   {
     path: "/profile",
     name: "Profile",
     meta: {
       //user must be authenticated
-      authenticationRequired: true,
+      authenticationRequired: true
     },
     component: () =>
-      import(/* webpackChunkName: "profile" */ "../views/Profile.vue"),
+      import(/* webpackChunkName: "profile" */ "../views/Profile.vue")
   },
   {
     path: "/login",
     name: "Login",
     meta: {
       //user must be un-authenticated
-      authenticationRequired: false,
+      authenticationRequired: false
     },
     component: () =>
-      import(/* webpackChunkName: "login" */ "../views/Login.vue"),
+      import(/* webpackChunkName: "login" */ "../views/Login.vue")
   },
   {
     path: "/signup",
     name: "SignUp",
     meta: {
-      authenticationRequired: false,
+      authenticationRequired: false
     },
     component: () =>
-      import(/* webpackChunkName: "signup" */ "../views/SignUp.vue"),
+      import(/* webpackChunkName: "signup" */ "../views/SignUp.vue")
   },
   {
     path: "/resetpassword",
     name: "ResetPassword",
     meta: {
-      authenticationRequired: false,
+      authenticationRequired: false
     },
     component: () =>
       import(
         /* webpackChunkName: "resetpassword" */ "../views/ResetPassword.vue"
-      ),
+      )
   },
   {
     path: "/setnewpassword",
     name: "SetNewPassword",
     meta: {
-      authenticationRequired: false,
+      authenticationRequired: false
     },
     component: () =>
       import(
         /* webpackChunkName: "setnewpassword" */ "../views/SetNewPassword.vue"
-      ),
+      )
   },
   {
     path: "/confirmemail",
     name: "ConfirmEmail",
     component: () =>
-      import(
-        /* webpackChunkName: "confirmemail" */ "../views/ConfirmEmail.vue"
-      ),
+      import(/* webpackChunkName: "confirmemail" */ "../views/ConfirmEmail.vue")
   },
   {
     path: "/admin",
     name: "Admin",
     meta: {
       //user must has admin role
-      requiredRole: "admin",
+      requiredRole: "admin"
     },
     component: () =>
-      import(/* webpackChunkName: "admin" */ "../views/Admin.vue"),
+      import(/* webpackChunkName: "admin" */ "../views/Admin.vue")
   },
   {
     path: "/about",
@@ -84,7 +82,7 @@ const routes: Array<RouteRecordRaw> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+      import(/* webpackChunkName: "about" */ "../views/About.vue")
   },
   {
     path: "/termsconditions",
@@ -92,19 +90,19 @@ const routes: Array<RouteRecordRaw> = [
     component: () =>
       import(
         /* webpackChunkName: "termsconditions" */ "../views/TermsConditions.vue"
-      ),
+      )
   },
   {
     path: "/:notfound",
     name: "NotFound",
     component: () =>
-      import(/* webpackChunkName: "notfound" */ "../views/NotFound.vue"),
-  },
+      import(/* webpackChunkName: "notfound" */ "../views/NotFound.vue")
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes,
+  routes
 });
 
 router.beforeEach((to, from, next) => {

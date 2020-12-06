@@ -75,8 +75,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { PersonalInformation, UserDto }  from "@/dto/user.dto";
-import {UserService} from "@/services/user";
+import { PersonalInformation, UserDto } from "@/dto/user.dto";
+import { UserService } from "@/services/user";
 
 export default defineComponent({
   name: "TheUpdatePersonalInformationCard",
@@ -88,8 +88,8 @@ export default defineComponent({
         streetAndNumber: "",
         city: "",
         postalCode: "",
-        country: "",
-      } as PersonalInformation,
+        country: ""
+      } as PersonalInformation
     };
   },
   created() {
@@ -101,15 +101,15 @@ export default defineComponent({
 
       try {
         const result = await userService.updatePersonalInformation(
-            this.$store.getters["authentication/getAccessToken"],
-            this.personalInformation
+          this.$store.getters["authentication/getAccessToken"],
+          this.personalInformation
         );
 
         this.$toast.add({
           severity: "success",
           summary: "Personal information updated",
           detail: result,
-          life: 5000,
+          life: 5000
         });
         await this.$store.dispatch("user/loadUser");
         this.resetForm();
@@ -118,7 +118,7 @@ export default defineComponent({
           severity: "error",
           summary: "Error on updating personal information",
           detail: error.response.data.error,
-          life: 5000,
+          life: 5000
         });
       }
     },
@@ -133,13 +133,13 @@ export default defineComponent({
         this.personalInformation.city = "";
         this.personalInformation.country = "";
       }
-    },
+    }
   },
   computed: {
     user(): UserDto {
       return this.$store.getters["user/getUser"];
-    },
-  },
+    }
+  }
 });
 </script>
 

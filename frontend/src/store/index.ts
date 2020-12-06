@@ -9,6 +9,6 @@ export default createStore({
   getters: {},
   modules: {
     authentication: AuthenticationStore,
-    user: UserStore,
-  },
+    user: UserStore
+  }
 });
