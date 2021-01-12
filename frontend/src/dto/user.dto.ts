@@ -9,7 +9,6 @@ export interface PersonalInformation {
 
 export interface PersonalSettings {
   newsletterSubscription: Date | null;
-  notificationSubscription: any | null;
 }
 
 export interface UserDto {

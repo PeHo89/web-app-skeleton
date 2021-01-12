@@ -7,7 +7,6 @@ import { SecurityModule } from '../security/security.module';
 import { MailModule } from '../mail/mail.module';
 import { FileModule } from '../file/file.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
-import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -16,7 +15,6 @@ import { NotificationModule } from '../notification/notification.module';
     MailModule,
     FileModule,
     AuthenticationModule,
-    NotificationModule,
   ],
   controllers: [UserController],
   providers: [UserService],

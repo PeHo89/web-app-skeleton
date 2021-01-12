@@ -26,57 +26,16 @@ import { PasswordDto } from '../dto/password.dto';
 import { UpdatePasswordDto } from '../dto/updatePassword.dto';
 import { UpdateEmailDto } from '../dto/updateEmail.dto';
 import { PersonalInformation, PersonalSettings } from '../dto/user.dto';
-import { NotificationService } from '../notification/notification.service';
-import { User } from './user.schema';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly notificationService: NotificationService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   @Roles('admin')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   async getAllUser(): Promise<UserDto[]> {
     return (await this.userService.getAllUser(true)) as UserDto[];
-  }
-
-  /*
-  TODO:
-  - specify notification
-  - move method to suitable place
-  */
-  @Post('notify/:userId')
-  @Roles('admin')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  async notifyUser(
-    @Param() params,
-    @Body() notification: any,
-  ): Promise<string> {
-    const user = (await this.userService.getUserById(
-      params.userId,
-      false,
-    )) as User;
-    if (!user) {
-      return 'No user found';
-    } else if (
-      !user.personalSettings ||
-      !user.personalSettings.notificationSubscription
-    ) {
-      return 'User has no active subscription for notifications';
-    }
-    const result = await this.notificationService.sendNotification(
-      user.personalSettings.notificationSubscription,
-      JSON.stringify(notification),
-    );
-
-    if (result) {
-      return 'Successfully sent notification';
-    } else {
-      return 'Failed to send notification';
-    }
   }
 
   @Post()

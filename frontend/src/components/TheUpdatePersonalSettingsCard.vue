@@ -10,16 +10,6 @@
       />
     </div>
     <div class="input-container">
-      <label class="switch-label" for="notification-switch"
-        >Notifications</label
-      >
-      <InputSwitch
-        id="notification-switch"
-        v-model="personalSettingsForm.notification"
-        @change="onNotificationSwitchChange"
-      />
-    </div>
-    <div class="input-container">
       <div>
         <Button
           @click="updatePersonalSettings"
@@ -43,12 +33,10 @@ export default defineComponent({
     return {
       personalSettingsForm: {
         newsletter: false,
-        notification: false
       },
       personalSettings: {
         newsletterSubscription: null,
-        notificationSubscription: null
-      } as PersonalSettings
+      } as PersonalSettings,
     };
   },
   created() {
@@ -68,7 +56,7 @@ export default defineComponent({
           severity: "success",
           summary: "Personal settings updated",
           detail: result,
-          life: 5000
+          life: 5000,
         });
         await this.$store.dispatch("user/loadUser");
       } catch (error) {
@@ -76,22 +64,17 @@ export default defineComponent({
           severity: "error",
           summary: "Error on updating personal settings",
           detail: error.response.data.error,
-          life: 5000
+          life: 5000,
         });
       }
     },
     loadSettings() {
       if (!this.user.personalSettings) {
         this.personalSettingsForm.newsletter = false;
-        this.personalSettingsForm.notification = false;
       } else {
         this.personalSettings.newsletterSubscription = this.user.personalSettings.newsletterSubscription;
         this.personalSettingsForm.newsletter =
           this.user.personalSettings.newsletterSubscription !== null;
-
-        this.personalSettings.notificationSubscription = this.user.personalSettings.notificationSubscription;
-        this.personalSettingsForm.notification =
-          this.user.personalSettings.notificationSubscription !== null;
       }
     },
     onNewsletterSwitchChange() {
@@ -101,60 +84,12 @@ export default defineComponent({
         this.personalSettings.newsletterSubscription = null;
       }
     },
-    async onNotificationSwitchChange() {
-      if (this.personalSettingsForm.notification) {
-        let permission = Notification.permission;
-
-        let requestedPermission = false;
-
-        if (permission === "default") {
-          requestedPermission = true;
-          permission = await Notification.requestPermission();
-        }
-
-        if (permission === "denied" && !requestedPermission) {
-          this.$toast.add({
-            severity: "warn",
-            summary: "You have denied to receive notifications",
-            detail: "Please reset notification permissions in your browser",
-            life: 5000
-          });
-        }
-
-        if (permission === "granted") {
-          if (this.personalSettingsForm.notification) {
-            const serviceWorker = await navigator.serviceWorker.getRegistration();
-
-            if (!serviceWorker) {
-              // this.personalSettings.notificationSubscription = null;
-              return;
-            }
-
-            const pushSubscription = await serviceWorker.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: Helper.urlBase64ToUint8Array(
-                process.env.VUE_APP_VAPID_PUBLIC_KEY
-              )
-            });
-
-            this.personalSettings.notificationSubscription = pushSubscription;
-          } else {
-            this.personalSettings.notificationSubscription = null;
-          }
-        } else {
-          this.personalSettingsForm.notification = false;
-          this.personalSettings.notificationSubscription = null;
-        }
-      } else {
-        this.personalSettings.notificationSubscription = null;
-      }
-    }
   },
   computed: {
     user(): UserDto {
       return this.$store.getters["user/getUser"];
-    }
-  }
+    },
+  },
 });
 </script>
 
