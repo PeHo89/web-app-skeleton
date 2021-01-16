@@ -49,7 +49,11 @@ export class UserService {
     return result;
   }
 
-  async addUser(newUserDto: NewUserDto, dto: boolean): Promise<User | UserDto> {
+  async addUser(
+    newUserDto: NewUserDto,
+    dto: boolean,
+    isOAuthUser: boolean = false,
+  ): Promise<User | UserDto> {
     const result = await this.userModel
       .findOne({ email: newUserDto.email, active: true })
       .exec();
@@ -65,14 +69,37 @@ export class UserService {
 
     const { password, ...remainder } = newUserDto;
 
+    if (!newUserDto.email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Email can not be empty',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!password && !isOAuthUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Password can not be empty',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const user = {
       ...remainder,
       active: true,
-      passwordHash: this.securityService.createHash(password),
+      passwordHash: isOAuthUser
+        ? null
+        : this.securityService.createHash(password),
       roles: ['user'],
       setNewPasswordDetails: null,
       personalInformation: null,
       personalSettings: null,
+      isOAuthUser,
     } as User;
 
     const createdUser = new this.userModel(user);
@@ -110,6 +137,26 @@ export class UserService {
 
     const { password, adminSecret, ...remainder } = newAdminDto;
 
+    if (!newAdminDto.email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Email can not be empty',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Password can not be empty',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (adminSecret !== process.env.ADMIN_SECRET) {
       throw new HttpException(
         {
@@ -128,6 +175,7 @@ export class UserService {
       setNewPasswordDetails: null,
       personalInformation: null,
       personalSettings: null,
+      isOAuthUser: false,
     } as User;
 
     const createdAdmin = new this.userModel(admin);
@@ -289,6 +337,16 @@ export class UserService {
   async resetPassword(email: string): Promise<string> {
     const user = await this.userModel.findOne({ email, active: true }).exec();
 
+    if (user.isOAuthUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'OAuth user can not reset password',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (!user) {
       throw new HttpException(
         {
@@ -342,6 +400,17 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (result.isOAuthUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'OAuth user can not set new password',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (
       !result.setNewPasswordDetails ||
       !result.setNewPasswordDetails.setNewPasswordInProgress
@@ -413,6 +482,17 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (result.isOAuthUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'OAuth user can not update email',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (result.email !== updateEmailDto.oldEmail) {
       throw new HttpException(
         {
@@ -469,6 +549,17 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    if (result.isOAuthUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'OAuth user can not update password',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (
       result.passwordHash !==
       this.securityService.createHash(updatePasswordDto.oldPassword)

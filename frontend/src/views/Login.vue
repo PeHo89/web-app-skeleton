@@ -29,6 +29,21 @@
         </div>
       </div>
       <div class="input-container">
+        <hr />
+      </div>
+      <p class="full-width center">
+        No account? <router-link to="/signup">Signup</router-link> or login with
+      </p>
+      <div class="full-width center">
+        <Button
+          @click="loginWithGoogle"
+          label="Google"
+          class="center p-button-text p-button-plain p-button-raised"
+          icon="pi pi-google"
+          iconPos="right"
+        />
+      </div>
+      <div class="input-container">
         <div class="center">
           <Button
             class="p-button-text p-button-secondary"
@@ -44,6 +59,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { LoginDto } from "@/dto/login.dto";
+import { IdTokenDto } from "@/dto/idToken.dto";
 
 export default defineComponent({
   name: "Login",
@@ -51,8 +67,8 @@ export default defineComponent({
     return {
       loginData: {
         username: "",
-        password: ""
-      } as LoginDto
+        password: "",
+      } as LoginDto,
     };
   },
   methods: {
@@ -68,11 +84,44 @@ export default defineComponent({
           severity: "error",
           summary: "Error on logging in",
           detail: "Wrong credentials",
-          life: 5000
+          life: 5000,
         });
       }
-    }
-  }
+    },
+    async loginWithGoogle() {
+      let googleUser;
+
+      try {
+        googleUser = await this.$gAuth.signIn();
+      } catch (error) {
+        if (error.error === "popup_closed_by_user") {
+          console.log("Google login pop up closed by the user");
+        } else {
+          console.error(error);
+        }
+        return;
+      }
+
+      const idTokenDto = {
+        idToken: googleUser.getAuthResponse().id_token,
+      } as IdTokenDto;
+
+      const result = await this.$store.dispatch(
+        "authentication/loginWithGoogle",
+        idTokenDto
+      );
+      if (result) {
+        this.$router.push("/");
+      } else {
+        this.$toast.add({
+          severity: "error",
+          summary: "Error on logging in",
+          detail: "Wrong credentials",
+          life: 5000,
+        });
+      }
+    },
+  },
 });
 </script>
 
@@ -80,7 +129,7 @@ export default defineComponent({
 #login-form-container {
   position: relative;
   width: 40%;
-  height: 300px;
+  height: 430px;
   left: 30%;
   padding: 20px;
 }

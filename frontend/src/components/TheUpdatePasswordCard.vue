@@ -8,6 +8,7 @@
           class="full-width"
           v-model="updatePasswordDto.oldPassword"
           type="password"
+          :disabled="user.isOAuthUser"
         />
         <label for="current-password-input">Current Password</label>
       </span>
@@ -19,6 +20,7 @@
           class="full-width"
           v-model="updatePasswordDto.newPassword"
           type="password"
+          :disabled="user.isOAuthUser"
         />
         <label for="new-password-input">New Password</label>
       </span>
@@ -29,9 +31,11 @@
           @click="updatePassword"
           label="Update Password"
           class="center"
+          :disabled="user.isOAuthUser"
         />
       </div>
     </div>
+    <p v-if="user.isOAuthUser" class="full-width center"><b>OAuth user can not update their email!</b></p>
   </div>
 </template>
 
@@ -39,6 +43,7 @@
 import { defineComponent } from "vue";
 import { UpdatePasswordDto } from "../dto/updatePassword.dto";
 import { UserService } from "../services/user";
+import {UserDto} from "@/dto/user.dto";
 
 export default defineComponent({
   name: "TheUpdatePasswordCard",
@@ -80,6 +85,11 @@ export default defineComponent({
     resetForm() {
       this.updatePasswordDto.oldPassword = "";
       this.updatePasswordDto.newPassword = "";
+    }
+  },
+  computed: {
+    user(): UserDto {
+      return this.$store.getters["user/getUser"];
     }
   }
 });

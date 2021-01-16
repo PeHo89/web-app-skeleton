@@ -73,7 +73,12 @@ export default defineComponent({
       try {
         result = await userService.signUp(this.signUpData);
       } catch (error) {
-        console.error(error);
+        this.$toast.add({
+          severity: "error",
+          summary: "Sign up failed",
+          detail: "Sign up failed due to an error",
+          life: 5000
+        });
       }
 
       if (result) {
@@ -93,7 +98,7 @@ export default defineComponent({
           this.$toast.add({
             severity: "error",
             summary: "Sign up failed",
-            detail: "Sign up failed due to server error",
+            detail: "Sign up failed due to an error",
             life: 5000
           });
         }

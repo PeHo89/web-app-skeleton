@@ -6,9 +6,14 @@ import { JwtService } from '@nestjs/jwt';
 import { AccessTokenDto } from '../dto/accessToken.dto';
 import { AccessTokenPayloadDto } from '../dto/accessTokenPayload.dto';
 import { LoginDto } from '../dto/login.dto';
+import { OAuth2Client } from 'google-auth-library';
+import { IdTokenDto } from '../dto/idToken.dto';
+import { NewUserDto } from '../dto/newUser.dto';
 
 @Injectable()
 export class AuthenticationService {
+  private oAuth2Client = new OAuth2Client(process.env.OAUTH_CLIENT_ID);
+
   constructor(
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
@@ -46,6 +51,27 @@ export class AuthenticationService {
       accessToken,
       expiresAt,
     };
+  }
+
+  async loginWithGoogle(idTokenDto: IdTokenDto): Promise<AccessTokenDto> {
+    const loginTicket = await this.oAuth2Client.verifyIdToken({
+      idToken: idTokenDto.idToken,
+      audience: process.env.OAUTH_CLIENT_ID,
+    });
+    const payload = loginTicket.getPayload();
+
+    let user = (await this.userService.getUserByEmail(
+      payload.email,
+      false,
+    )) as User;
+
+    if (!user) {
+      const newUserDto = { email: payload.email } as NewUserDto;
+
+      user = (await this.userService.addUser(newUserDto, false, true)) as User;
+    }
+
+    return this.login(user);
   }
 
   async userHasRole(id: string, roles: string[]): Promise<boolean> {

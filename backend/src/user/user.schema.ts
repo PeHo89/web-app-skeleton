@@ -21,6 +21,8 @@ export class User extends Document {
   personalInformation: PersonalInformation;
   @Prop()
   personalSettings: PersonalSettings;
+  @Prop()
+  isOAuthUser: false;
 }
 
 export interface DoubleOptInDetails {

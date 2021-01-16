@@ -7,6 +7,7 @@
           id="current-email-input"
           class="full-width"
           v-model="updateEmailDto.oldEmail"
+          :disabled="user.isOAuthUser"
         />
         <label for="current-email-input">Current Email</label>
       </span>
@@ -17,15 +18,18 @@
           id="new-email-input"
           class="full-width"
           v-model="updateEmailDto.newEmail"
+          :disabled="user.isOAuthUser"
         />
         <label for="new-email-input">New Email</label>
       </span>
     </div>
     <div class="input-container">
       <div>
-        <Button @click="updateEmail" label="Update Email" class="center" />
+        <Button @click="updateEmail" label="Update Email" class="center"
+                :disabled="user.isOAuthUser" />
       </div>
     </div>
+    <p v-if="user.isOAuthUser" class="full-width center"><b>OAuth user can not update their email!</b></p>
   </div>
 </template>
 

@@ -18,8 +18,17 @@ import ToastService from "primevue/toastservice";
 import FileUpload from "primevue/fileupload";
 import TabMenu from "primevue/tabmenu";
 import InputSwitch from "primevue/inputswitch";
+import GAuth from "vue3-google-oauth2";
+
+const gAuthOption = {
+  clientId: process.env.VUE_APP_OAUTH_CLIENT_ID,
+  scope: "profile email",
+  prompt: "select_account",
+};
 
 const app = createApp(App);
+
+app.use(GAuth, gAuthOption);
 
 app.use(ToastService);
 

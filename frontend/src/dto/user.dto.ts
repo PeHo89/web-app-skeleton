@@ -18,4 +18,5 @@ export interface UserDto {
   roles: string[];
   personalInformation: PersonalInformation;
   personalSettings: PersonalSettings;
+  isOAuthUser: boolean;
 }

@@ -1,6 +1,7 @@
 import { AuthenticationService } from "@/services/authentication";
 import { AccessTokenDto } from "@/dto/accessToken.dto";
 import { LoginDto } from "@/dto/login.dto";
+import { IdTokenDto } from "@/dto/idToken.dto";
 
 export interface AuthenticationState {
   accessToken: string;
@@ -13,7 +14,7 @@ export default {
   state: {
     accessToken: "",
     expiresAt: -1,
-    lastModification: {} as Date
+    lastModification: {} as Date,
   } as AuthenticationState,
   mutations: {
     setAccessToken(state: any, accessToken: string) {
@@ -30,7 +31,7 @@ export default {
     },
     clearExpiresAt(state: any) {
       state.expiresAt = -1;
-    }
+    },
   },
   actions: {
     setTokenAndDates(context: any, payload: AccessTokenDto) {
@@ -64,6 +65,27 @@ export default {
       }
       return false;
     },
+    async loginWithGoogle(context: any, payload: IdTokenDto): Promise<boolean> {
+      const authenticationService = AuthenticationService.getSingletonInstance();
+
+      let accessTokenDto;
+      try {
+        accessTokenDto = await authenticationService.loginWithGoogle(payload);
+      } catch (error) {
+        console.error(error);
+      }
+
+      if (accessTokenDto) {
+        context.dispatch("setTokenAndDates", accessTokenDto);
+
+        localStorage.setItem("accessTokenDto", JSON.stringify(accessTokenDto));
+
+        context.dispatch("user/loadUser", null, { root: true });
+
+        return true;
+      }
+      return false;
+    },
     loadFromLocalStorage(context: any) {
       const localStoredAccessTokenDto = localStorage.getItem("accessTokenDto");
       if (localStoredAccessTokenDto) {
@@ -80,7 +102,7 @@ export default {
 
       context.dispatch("user/clearUser", null, { root: true });
       context.dispatch("user/clearProfileImage", null, { root: true });
-    }
+    },
   },
   getters: {
     isLoggedIn(state: any): boolean {
@@ -92,6 +114,6 @@ export default {
     },
     getAccessToken(state: any): string {
       return state.accessToken;
-    }
-  }
+    },
+  },
 };

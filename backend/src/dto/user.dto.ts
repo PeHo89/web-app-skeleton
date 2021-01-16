@@ -27,4 +27,6 @@ export class UserDto {
   personalInformation: PersonalInformation;
   @Expose()
   personalSettings: PersonalSettings;
+  @Expose()
+  isOAuthUser: boolean;
 }
