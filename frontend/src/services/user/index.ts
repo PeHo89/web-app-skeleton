@@ -137,4 +137,16 @@ export class UserService {
     );
     return result.data as NewSubscriptionSessionDto;
   }
+
+  async confirmSubscription(
+    accessToken: string,
+    sessionId: string
+  ): Promise<string> {
+    const result = await axios.put(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/subscription/confirm?session_id=${sessionId}`,
+      {},
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return result.data as string;
+  }
 }

@@ -23,6 +23,8 @@ export class User extends Document {
   personalSettings: PersonalSettings;
   @Prop()
   isOAuthUser: false;
+  @Prop()
+  subscription: Subscription;
 }
 
 export interface DoubleOptInDetails {
@@ -49,6 +51,14 @@ export interface PersonalInformation {
 
 export interface PersonalSettings {
   newsletterSubscription: Date | null;
+}
+
+export interface Subscription {
+  sessionId: string;
+  createdTimestamp: string;
+  confirmedTimestamp: string;
+  stripePriceId: string;
+  stripeSubscriptionId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

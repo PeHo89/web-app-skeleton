@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="center">Subscription</h1>
-    <h3 class="center">No worries, maybe later!</h3>
+    <h3 class="center">No worries! Maybe later!</h3>
   </div>
 </template>
 

@@ -125,6 +125,15 @@ export class UserController {
     return this.userService.newSubscription(req.user.sub, newSubscriptionDto);
   }
 
+  @Put('profile/subscription/confirm')
+  @UseGuards(AuthGuard('jwt'))
+  async confirmSubscription(
+    @Request() req: any,
+    @Query() query: any,
+  ): Promise<string> {
+    return this.userService.confirmSubscription(req.user.sub, query.session_id);
+  }
+
   @Get('subscription')
   async getAvailableAboSubscriptions(): Promise<SubscriptionDto[]> {
     return this.userService.getAvailableSubscriptions();

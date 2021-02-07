@@ -1,5 +1,5 @@
 import { Logger, Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { User, UserDocument } from './user.schema';
+import { Subscription, User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -700,6 +700,18 @@ export class UserService {
     userId: string,
     newSubscriptionDto: NewSubscriptionDto,
   ): Promise<NewSubscriptionSessionDto> {
+    const user = (await this.getUserById(userId, false)) as User;
+
+    if (user.subscription && user.subscription.confirmedTimestamp !== null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'User already has confirmed subscription',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const session = await this.stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -713,10 +725,87 @@ export class UserService {
       cancel_url: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/subscription-cancel`,
     });
 
-    console.log(session.id);
+    await this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        'subscription.sessionId': session.id,
+        'subscription.createdTimestamp': new Date().toISOString(),
+        'subscription.stripePriceId': newSubscriptionDto.id,
+        'subscription.confirmedTimestamp': null,
+      },
+      {
+        new: true,
+      },
+    );
 
     return {
       sessionId: session.id,
     } as NewSubscriptionSessionDto;
+  }
+
+  public async confirmSubscription(
+    userId: string,
+    sessionId: string,
+  ): Promise<string> {
+    const user = (await this.getUserById(userId, false)) as User;
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (user.subscription && user.subscription.confirmedTimestamp !== null) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Subscription already confirmed',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (user.subscription && user.subscription.sessionId !== sessionId) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: "Session ids for subscription doesn't match",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const session = await this.stripe.checkout.sessions.retrieve(sessionId);
+
+    if (session && session.subscription && session.subscription !== '') {
+      await this.userModel.findByIdAndUpdate(
+        userId,
+        {
+          'subscription.confirmedTimestamp': new Date().toISOString(),
+          'subscription.stripeSubscriptionId': session.subscription,
+        },
+        {
+          new: true,
+        },
+      );
+
+      this.logger.log(
+        `Successfully confirmed subscription with id '${session.subscription}' for user with id '${user._id}'`,
+      );
+      return 'Successfully confirmed subscription';
+    } else {
+      this.logger.log(
+        `Failed confirming subscription for user with id '${user._id}'`,
+      );
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed confirming subscription',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
