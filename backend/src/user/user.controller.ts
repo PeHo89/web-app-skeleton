@@ -125,6 +125,12 @@ export class UserController {
     return this.userService.newSubscription(req.user.sub, newSubscriptionDto);
   }
 
+  @Delete('profile/subscription')
+  @UseGuards(AuthGuard('jwt'))
+  async cancelSubscription(@Request() req: any): Promise<string> {
+    return this.userService.cancelSubscription(req.user.sub);
+  }
+
   @Put('profile/subscription/confirm')
   @UseGuards(AuthGuard('jwt'))
   async confirmSubscription(

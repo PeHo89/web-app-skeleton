@@ -1,3 +1,5 @@
+import Subscription from "@/views/Subscription.vue";
+
 export interface PersonalInformation {
   firstName: string;
   lastName: string;
@@ -11,6 +13,14 @@ export interface PersonalSettings {
   newsletterSubscription: Date | null;
 }
 
+export interface Subscription {
+  sessionId: string;
+  createdTimestamp: string;
+  confirmedTimestamp: string;
+  stripePriceId: string;
+  stripeSubscriptionId: string;
+}
+
 export interface UserDto {
   id: string;
   email: string;
@@ -19,4 +29,5 @@ export interface UserDto {
   personalInformation: PersonalInformation;
   personalSettings: PersonalSettings;
   isOAuthUser: boolean;
+  subscription: Subscription;
 }

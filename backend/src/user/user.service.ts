@@ -808,4 +808,56 @@ export class UserService {
       );
     }
   }
+
+  async cancelSubscription(userId: string): Promise<string> {
+    const user = (await this.getUserById(userId, false)) as User;
+
+    if (
+      !user.subscription ||
+      user.subscription.confirmedTimestamp === null ||
+      user.subscription.stripeSubscriptionId === null
+    ) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'User has no confirmed subscription to cancel',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const result = await this.stripe.subscriptions.del(
+      user.subscription.stripeSubscriptionId,
+    );
+
+    if (result && result.status === 'canceled') {
+      const stripeSubscriptionId = user.subscription.stripeSubscriptionId;
+
+      await this.userModel.findByIdAndUpdate(
+        userId,
+        {
+          subscription: {} as Subscription,
+        },
+        {
+          new: true,
+        },
+      );
+
+      this.logger.log(
+        `Successfully canceled confirmed subscription with id '${stripeSubscriptionId}' for user with id '${user._id}'`,
+      );
+      return 'Successfully canceled confirmed subscription';
+    } else {
+      this.logger.log(
+        `Failed canceling confirmed subscription for user with id '${user._id}'`,
+      );
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Failed canceling confirmed subscription',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

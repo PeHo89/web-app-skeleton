@@ -13,6 +13,14 @@ export interface PersonalSettings {
   newsletterSubscription: Date | null;
 }
 
+export interface Subscription {
+  sessionId: string;
+  createdTimestamp: string;
+  confirmedTimestamp: string;
+  stripePriceId: string;
+  stripeSubscriptionId: string;
+}
+
 @Exclude()
 export class UserDto {
   @Expose()
@@ -29,4 +37,6 @@ export class UserDto {
   personalSettings: PersonalSettings;
   @Expose()
   isOAuthUser: boolean;
+  @Expose()
+  subscription: Subscription;
 }

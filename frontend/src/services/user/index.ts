@@ -149,4 +149,12 @@ export class UserService {
     );
     return result.data as string;
   }
+
+  async cancelSubscription(accessToken: string): Promise<string> {
+    const result = await axios.delete(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/subscription`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return result.data as string;
+  }
 }

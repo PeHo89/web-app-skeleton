@@ -3,7 +3,7 @@
     <h1 class="center">Subscription</h1>
     <p class="center">At this time, we have the following subscriptions for you</p>
     <div class="p-grid p-jc-center">
-      <Card class="p-col-4" v-for="subscriptionDto in subscriptionDtos" :key="subscriptionDto.id">
+      <Card class="p-col-5" v-for="subscriptionDto in subscriptionDtos" :key="subscriptionDto.id">
         <template #title>
           {{ subscriptionDto.name }}
         </template>
@@ -18,9 +18,17 @@
           </div>
           <div style="float: right">
             <Button
+                v-if="user.subscription.stripePriceId === subscriptionDto.id"
+                label="Cancel"
+                class="p-button-danger p-button p-button-sm"
+                @click="cancelSubscription"
+            />
+            &nbsp;
+            <Button
                 label="Subscribe"
                 class="p-button-success p-button-outlined p-button-sm"
                 @click="subscribeToAbo(subscriptionDto.id)"
+                :disabled="user.subscription.stripePriceId"
             />
           </div>
         </template>
@@ -34,6 +42,7 @@ import { defineComponent } from "vue";
 import { UserService } from "@/services/user";
 import { SubscriptionDto } from "@/dto/subscription.dto";
 import { NewSubscriptionDto } from "@/dto/newSubscription.dto";
+import {UserDto} from "@/dto/user.dto";
 
 export default defineComponent({
   name: "Subscription",
@@ -60,7 +69,37 @@ export default defineComponent({
 
       this.stripe.redirectToCheckout(newAboSubscriptionSessionDto);
     },
+    async cancelSubscription() {
+      const userService = UserService.getSingletonInstance();
+
+      try {
+        const result = await userService.cancelSubscription(
+            this.$store.getters["authentication/getAccessToken"]
+        );
+
+        this.$toast.add({
+          severity: "success",
+          summary: "Canceled subscription",
+          detail: result,
+          life: 5000
+        });
+
+        await this.$store.dispatch("user/loadUser");
+      } catch (error) {
+        this.$toast.add({
+          severity: "error",
+          summary: "Error on cancelling subscription",
+          detail: error.response.data.error,
+          life: 5000
+        });
+      }
+    }
   },
+  computed: {
+    user(): UserDto {
+      return this.$store.getters["user/getUser"];
+    }
+  }
 });
 </script>
 
