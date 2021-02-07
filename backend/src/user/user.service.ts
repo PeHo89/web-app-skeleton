@@ -17,10 +17,17 @@ import { NewAdminDto } from '../dto/newAdmin.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { UpdateEmailDto } from '../dto/updateEmail.dto';
 import { UpdatePasswordDto } from '../dto/updatePassword.dto';
+import Stripe from 'stripe';
+import { NewSubscriptionDto } from '../dto/newSubscription.dto';
+import { SubscriptionDto } from '../dto/subscription.dto';
+import { NewSubscriptionSessionDto } from '../dto/newSubscriptionSession.dto';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
+  private stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2020-08-27',
+  });
 
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -665,5 +672,51 @@ export class UserService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  public async getAvailableSubscriptions(): Promise<SubscriptionDto[]> {
+    const stripePricesAndProducts = (
+      await this.stripe.prices.list({ expand: ['data.product'] })
+    ).data;
+
+    const subscriptionDtos = stripePricesAndProducts.map(
+      (stripePriceAndProduct) =>
+        ({
+          id: stripePriceAndProduct.id,
+          name: (stripePriceAndProduct.product as Stripe.Product).name,
+          description: (stripePriceAndProduct.product as Stripe.Product)
+            .description,
+          amount: stripePriceAndProduct.unit_amount,
+          currency: stripePriceAndProduct.currency,
+          type: stripePriceAndProduct.type,
+          interval: stripePriceAndProduct.recurring.interval,
+        } as SubscriptionDto),
+    );
+
+    return subscriptionDtos;
+  }
+
+  public async newSubscription(
+    userId: string,
+    newSubscriptionDto: NewSubscriptionDto,
+  ): Promise<NewSubscriptionSessionDto> {
+    const session = await this.stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: newSubscriptionDto.id,
+          quantity: 1,
+        },
+      ],
+      success_url: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/subscription-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_PROTOCOL}://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/subscription-cancel`,
+    });
+
+    console.log(session.id);
+
+    return {
+      sessionId: session.id,
+    } as NewSubscriptionSessionDto;
   }
 }

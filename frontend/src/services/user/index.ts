@@ -5,6 +5,9 @@ import { EmailDto } from "@/dto/email.dto";
 import { PasswordDto } from "@/dto/password.dto";
 import { UpdatePasswordDto } from "@/dto/updatePassword.dto";
 import { UpdateEmailDto } from "@/dto/updateEmail.dto";
+import { SubscriptionDto } from "@/dto/subscription.dto";
+import { NewSubscriptionSessionDto } from "@/dto/newSubscriptionSessionDto";
+import { NewSubscriptionDto } from "@/dto/newSubscription.dto";
 
 export class UserService {
   static basePath = "user";
@@ -114,5 +117,24 @@ export class UserService {
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/confirm?userId=${userId}&token=${token}`
     );
     return result.data as string;
+  }
+
+  async getAvailableSubscriptions(): Promise<SubscriptionDto[]> {
+    const result = await axios.get(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/subscription`
+    );
+    return result.data as SubscriptionDto[];
+  }
+
+  async newSubscription(
+    accessToken: string,
+    newAboSubscriptionDto: NewSubscriptionDto
+  ): Promise<NewSubscriptionSessionDto> {
+    const result = await axios.post(
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/${UserService.basePath}/profile/subscription`,
+      newAboSubscriptionDto,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    return result.data as NewSubscriptionSessionDto;
   }
 }

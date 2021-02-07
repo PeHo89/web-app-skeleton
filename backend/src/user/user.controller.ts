@@ -26,6 +26,9 @@ import { PasswordDto } from '../dto/password.dto';
 import { UpdatePasswordDto } from '../dto/updatePassword.dto';
 import { UpdateEmailDto } from '../dto/updateEmail.dto';
 import { PersonalInformation, PersonalSettings } from '../dto/user.dto';
+import { NewSubscriptionDto } from '../dto/newSubscription.dto';
+import { SubscriptionDto } from '../dto/subscription.dto';
+import { NewSubscriptionSessionDto } from '../dto/newSubscriptionSession.dto';
 
 @Controller('user')
 export class UserController {
@@ -76,7 +79,7 @@ export class UserController {
   async updateEmail(
     @Request() req: any,
     @Body() updateEmailDto: UpdateEmailDto,
-  ) {
+  ): Promise<string> {
     return this.userService.updateEmail(req.user.sub, updateEmailDto);
   }
 
@@ -85,7 +88,7 @@ export class UserController {
   async updatePersonalInformation(
     @Request() req: any,
     @Body() personalInformation: PersonalInformation,
-  ) {
+  ): Promise<string> {
     return this.userService.updatePersonalInformation(
       req.user.sub,
       personalInformation,
@@ -97,7 +100,7 @@ export class UserController {
   async updatePersonalSettings(
     @Request() req: any,
     @Body() personalSettings: PersonalSettings,
-  ) {
+  ): Promise<string> {
     return this.userService.updatePersonalSettings(
       req.user.sub,
       personalSettings,
@@ -109,8 +112,22 @@ export class UserController {
   async updatePassword(
     @Request() req: any,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ) {
+  ): Promise<string> {
     return this.userService.updatePassword(req.user.sub, updatePasswordDto);
+  }
+
+  @Post('profile/subscription')
+  @UseGuards(AuthGuard('jwt'))
+  async newSubscription(
+    @Request() req: any,
+    @Body() newSubscriptionDto: NewSubscriptionDto,
+  ): Promise<NewSubscriptionSessionDto> {
+    return this.userService.newSubscription(req.user.sub, newSubscriptionDto);
+  }
+
+  @Get('subscription')
+  async getAvailableAboSubscriptions(): Promise<SubscriptionDto[]> {
+    return this.userService.getAvailableSubscriptions();
   }
 
   @Put('confirm')

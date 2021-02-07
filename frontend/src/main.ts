@@ -18,6 +18,7 @@ import ToastService from "primevue/toastservice";
 import FileUpload from "primevue/fileupload";
 import TabMenu from "primevue/tabmenu";
 import InputSwitch from "primevue/inputswitch";
+import Card from "primevue/card";
 import GAuth from "vue3-google-oauth2";
 
 const gAuthOption = {
@@ -43,6 +44,7 @@ app.component("Toast", Toast);
 app.component("FileUpload", FileUpload);
 app.component("TabMenu", TabMenu);
 app.component("InputSwitch", InputSwitch);
+app.component("Card", Card);
 
 app.use(store);
 app.use(router);

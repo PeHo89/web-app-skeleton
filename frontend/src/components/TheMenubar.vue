@@ -62,6 +62,13 @@ export default defineComponent({
           visible: () => this.isLoggedIn && this.isAdmin
         },
         {
+          label: "Subscription",
+          icon: "pi pi-fw pi-shopping-cart",
+          to: "/subscription",
+          // @ts-ignore
+          visible: () => this.isLoggedIn
+        },
+        {
           label: "User",
           icon: "pi pi-fw pi-user",
           // @ts-ignore

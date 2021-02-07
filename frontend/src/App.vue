@@ -37,6 +37,11 @@ export default defineComponent({
   width: 50%;
   left: 25%;
 }
+.quarter-width-centered {
+  position: relative;
+  width: 25%;
+  left: 37.5%;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;
