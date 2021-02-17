@@ -21,6 +21,12 @@ import Stripe from 'stripe';
 import { NewSubscriptionDto } from '../dto/newSubscription.dto';
 import { SubscriptionDto } from '../dto/subscription.dto';
 import { NewSubscriptionSessionDto } from '../dto/newSubscriptionSession.dto';
+import { PasswordDto } from '../dto/password.dto';
+import Web3 from 'web3';
+import { Account } from 'web3-core';
+import { SignMessageDto } from '../dto/signMessage.dto';
+import { SignedMessageDto } from '../dto/signedMessage.dto';
+import { VerifyMessageDto } from '../dto/verifyMessage.dto';
 
 @Injectable()
 export class UserService {
@@ -28,6 +34,7 @@ export class UserService {
   private stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2020-08-27',
   });
+  private web3 = new Web3();
 
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -859,5 +866,109 @@ export class UserService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async createBlockchainAccount(
+    userId: string,
+    passwordDto: PasswordDto,
+  ): Promise<string> {
+    const user = (await this.getUserById(userId, false)) as User;
+
+    if (user.blockchainAccount && user.blockchainAccount.id) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'User has already an blockchain account',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const account = this.web3.eth.accounts.create();
+    const encryptedAccount = account.encrypt(passwordDto.password);
+
+    await this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        blockchainAccount: encryptedAccount,
+      },
+      {
+        new: true,
+      },
+    );
+
+    return 'Successfully created an blockchain account';
+  }
+
+  async signMessage(
+    userId: string,
+    signMessageDto: SignMessageDto,
+  ): Promise<SignedMessageDto> {
+    const user = (await this.getUserById(userId, false)) as User;
+
+    if (!user.blockchainAccount || !user.blockchainAccount.id) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'User has no blockchain account',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    let decryptedAccount: Account;
+
+    try {
+      decryptedAccount = this.web3.eth.accounts.decrypt(
+        user.blockchainAccount,
+        signMessageDto.password,
+      );
+    } catch (e) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'Invalid password',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const signedMessage = decryptedAccount.sign(signMessageDto.message);
+
+    return {
+      message: signedMessage.message,
+      signature: signedMessage.signature,
+    } as SignedMessageDto;
+  }
+
+  async verifyMessage(verifyMessageDto: VerifyMessageDto): Promise<boolean> {
+    const user = (await this.getUserById(
+      verifyMessageDto.userId,
+      false,
+    )) as User;
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!user.blockchainAccount || !user.blockchainAccount.id) {
+      return false;
+    }
+
+    const signingAddress = this.web3.eth.accounts.recover(
+      verifyMessageDto.message,
+      verifyMessageDto.signature,
+    );
+
+    return (
+      signingAddress.toLowerCase() ===
+      ('0x' + user.blockchainAccount.address).toLowerCase()
+    );
   }
 }

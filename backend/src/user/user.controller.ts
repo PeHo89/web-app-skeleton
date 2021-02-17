@@ -29,6 +29,9 @@ import { PersonalInformation, PersonalSettings } from '../dto/user.dto';
 import { NewSubscriptionDto } from '../dto/newSubscription.dto';
 import { SubscriptionDto } from '../dto/subscription.dto';
 import { NewSubscriptionSessionDto } from '../dto/newSubscriptionSession.dto';
+import { SignMessageDto } from '../dto/signMessage.dto';
+import { SignedMessageDto } from '../dto/signedMessage.dto';
+import { VerifyMessageDto } from '../dto/verifyMessage.dto';
 
 @Controller('user')
 export class UserController {
@@ -138,6 +141,31 @@ export class UserController {
     @Query() query: any,
   ): Promise<string> {
     return this.userService.confirmSubscription(req.user.sub, query.session_id);
+  }
+
+  @Post('blockchain/account')
+  @UseGuards(AuthGuard('jwt'))
+  async createBlockchainAccount(
+    @Request() req: any,
+    @Body() passwordDto: PasswordDto,
+  ): Promise<string> {
+    return this.userService.createBlockchainAccount(req.user.sub, passwordDto);
+  }
+
+  @Put('blockchain/message/sign')
+  @UseGuards(AuthGuard('jwt'))
+  async signMessage(
+    @Request() req: any,
+    @Body() signMessageDto: SignMessageDto,
+  ): Promise<SignedMessageDto> {
+    return this.userService.signMessage(req.user.sub, signMessageDto);
+  }
+
+  @Put('blockchain/message/verify')
+  async verifyMessage(
+    @Body() verifyMessageDto: VerifyMessageDto,
+  ): Promise<boolean> {
+    return this.userService.verifyMessage(verifyMessageDto);
   }
 
   @Get('subscription')

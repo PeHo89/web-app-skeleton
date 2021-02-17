@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { EncryptedKeystoreV3Json } from 'web3-core';
 
 export type UserDocument = User & Document;
 
@@ -25,6 +26,8 @@ export class User extends Document {
   isOAuthUser: false;
   @Prop()
   subscription: Subscription;
+  @Prop()
+  blockchainAccount: EncryptedKeystoreV3Json;
 }
 
 export interface DoubleOptInDetails {
